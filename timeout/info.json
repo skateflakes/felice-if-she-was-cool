@@ -1,18 +1,24 @@
 {
-    "name": "timeout",
-    "short": "Allows admins/people with permissions to timeout members in servers",
-    "description": "This cog allows server admins or users with appropriate permissions to timeout members in servers. A timeout is a temporary ban that can be used to prevent a user from sending messages or joining voice channels for a specified period of time.",
-    "end_user_data_statement": "This cog does not store any user data persistently.",
-    "install_msg": "Thanks for installing Timeout!\nPlease report any bugs/log output in *#support_other-cogs* on the cog support server (https://discord.gg/GET4DVk).",
-    "author": [
-        "crayyy_zee"
+    "author" : [
+        "sravan"
     ],
-    "required_cogs": {},
-    "requirements": [],
-    "tags": [
-        "moderation",
-        "timeout",
-        "ban"
+    "description" : "Add or remove timeout from users",
+    "disabled" : false,
+    "end_user_data_statement" : "This cog does not persistently store any data or metadata about users.",
+    "hidden" : false,
+    "install_msg" : "Thank you for installing. Run `[p]load timeout` to load the cog.",
+    "max_bot_version" : "0.0.0",
+    "min_bot_version" : "3.3.10",
+    "name" : "Timeout",
+    "permissions" : [],
+    "required_cogs" : {},
+    "requirements" : [
+        "humanize"
     ],
-    "type": "COG"
+    "short" : "Manage timeouts",
+    "tags" : [
+        "mod",
+        "timeout"
+    ],
+    "type" : "COG"
 }
