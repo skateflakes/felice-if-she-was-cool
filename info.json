@@ -1,9 +1,9 @@
 {
-    "name": "timeout",
-    "short": "Allows admins/people with permissions to timeout members in servers",
-    "description": "This cog allows server admins or users with appropriate permissions to timeout members in servers. A timeout is a temporary ban that can be used to prevent a user from sending messages or joining voice channels for a specified period of time.",
+    "name": "the bot",
+    "short": "a happy friend",
+    "description": "Multi-purpose bot for private Happy Tree Friends Discord servers.",
     "end_user_data_statement": "This cog does not store any user data persistently.",
-    "install_msg": "Thanks for installing Timeout!\nPlease report any bugs/log output in *#support_other-cogs* on the cog support server (https://discord.gg/GET4DVk).",
+    "install_msg": "# You were instructed to NOT install this cog to your bot. Please uninstall it as it will have possible issues.",
     "author": [
         "crayyy_zee"
     ],
