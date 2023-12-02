@@ -1,12 +1,24 @@
 {
-    "author": ["marblyn"],
-    "min_bot_version": "3.5.0",
-    "description": "Logs deleted images for moderation purposes.\n⚠️ Usage warning: You may or may not be liable for keeping content that breaks Discord TOS.",
-    "hidden": false,
-    "install_msg": "🎐 __**ImageLog**__ ```Cog installed. Instructions:\n1. Load it with [p]load imagelog\n2. Set the log channel with [p]imagelog setchannel```",
-    "required_cogs": {},
-    "requirements": [],
-    "short": "Logs deleted images for moderation purposes.",
-    "end_user_data_statement": "This cog stores images sent by users into a moderation channel until they are manually removed. You may or may not be liable for their content if they break Discord TOS.",
-    "tags": ["crab", "message", "scan", "log", "image", "moderation"]
+    "author" : [
+        "sravan"
+    ],
+    "description" : "Add or remove timeout from users",
+    "disabled" : false,
+    "end_user_data_statement" : "This cog does not persistently store any data or metadata about users.",
+    "hidden" : false,
+    "install_msg" : "Thank you for installing. Run `[p]load timeout` to load the cog.",
+    "max_bot_version" : "0.0.0",
+    "min_bot_version" : "3.3.10",
+    "name" : "Image Log",
+    "permissions" : [],
+    "required_cogs" : {},
+    "requirements" : [
+        "humanize"
+    ],
+    "short" : "Manage timeouts",
+    "tags" : [
+        "mod",
+        "timeout"
+    ],
+    "type" : "COG"
 }
