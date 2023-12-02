@@ -54,7 +54,7 @@ class ImageLog(commands.Cog):
                     if channel.permissions_for(message.author).manage_messages and not await self.config.guild(guild).log_moderator_self_deletes():
                         return # self delete by mod
                     deleter = message.author
-                embed.add_field(name="Probably deleted by", value=deleter.mention)
+                embed.add_field(name="Deleted by", value=deleter.mention)
             else:
                 embed.add_field(name="Missing audit log permission", value="Oops")
             img = io.BytesIO()
