@@ -4,7 +4,7 @@ from datetime import datetime
 from redbot.core import commands, Config
 from typing import Optional
 
-IMAGE_TYPES = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp")
+IMAGE_TYPES = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".mov", ".mp4")
 
 class ImageLog(commands.Cog):
     """Logs deleted images for moderation purposes."""
