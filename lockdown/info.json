@@ -1,0 +1,17 @@
+{
+    "author": [
+        "Sharky The King"
+    ],
+    "name": "Lockdown",
+    "install_msg": "Thank you for installing Lockdown!",
+    "description": "Guild Lockdown System",
+    "short": "Locking System",
+    "tags": [
+        "Admin",
+        "Mod",
+        "Guild Lockdown"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not persistently store data or metadata about users.",
+    "min_bot_version": "3.5.0"
+}
