@@ -363,7 +363,7 @@ class EmbedFieldRemoverView(discord.ui.View):
 class EmbedEditorView(discord.ui.View):
     def __init__(self, ctx: Context):
         self.context = ctx
-        super().__init__(timeout=180)
+        super().__init__(timeout=604800)
         self.embed = discord.Embed(
             title=DEFAULT_EMBED_TITLE,
             description=DEFAULT_EMBED_DESCRIPTION,
