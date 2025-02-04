@@ -8,8 +8,8 @@ class Screenshot(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.width = 1280
-        self.height = 720
+        self.width = 300
+        self.height = 454
 
     async def take_screenshot(self, url: str, path: str):
         async with async_playwright() as p:
