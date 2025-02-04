@@ -1,4 +1,6 @@
 # HTFBot ♍️
 Repository used for collecting random cogs from Discord Red and reusing them into a private Discord bot.
+
+This bot is mostly used in the [Happy Tree Friends Discord server](https://discord.gg/happy-tree-friends-1033567360692523008).
 # DO NOT USE THIS REPO
 This repo is meant for a private Discord bot instance, and we do not recommend using this as this uses cogs that does not belong to us.
