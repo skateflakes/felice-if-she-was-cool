@@ -1,5 +1,5 @@
-from .mycog import slingshot
+from .htf import slingshot
 
 
-async def setup(bot):
-    await bot.add_cog(slingshot(bot))
+async def setup(bot: Red) -> None:
+    await bot.add_cog(Mod(bot))
