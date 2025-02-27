@@ -1,4 +1,4 @@
-from core import redbot
+from redbot.core.bot import Red
 
 
 async def setup(bot: Red) -> None:
