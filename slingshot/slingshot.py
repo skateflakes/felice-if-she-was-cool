@@ -1,6 +1,8 @@
 import discord
 from redbot.core import commands
-from playwright.async_api import async_playwright
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 import os
 
 class Screenshot(commands.Cog):
@@ -13,13 +15,15 @@ class Screenshot(commands.Cog):
         self.url = "https://htfslingshot.endersfund.com/htf_slingshot/web/sidebar/weekly"
 
     async def take_screenshot(self, path: str):
-        async with async_playwright() as p:
-            browser = await p.chromium.launch()
-            page = await browser.new_page()
-            await page.set_viewport_size({"width": self.width, "height": self.height})
-            await page.goto(self.url, wait_until="load")
-            await page.screenshot(path=path)
-            await browser.close()
+        options = Options()
+        options.add_argument("--headless")
+        options.add_argument(f"--window-size={self.width},{self.height}")
+        
+        service = Service("chromedriver")  # Ensure chromedriver is installed
+        driver = webdriver.Chrome(service=service, options=options)
+        driver.get(self.url)
+        driver.save_screenshot(path)
+        driver.quit()
 
     @commands.command()
     async def slingshot(self, ctx):
