@@ -1,4 +1,4 @@
-from .htf import slingshot
+from core import redbot
 
 
 async def setup(bot: Red) -> None:
