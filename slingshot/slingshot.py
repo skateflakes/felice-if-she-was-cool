@@ -23,6 +23,8 @@ class Screenshot(commands.Cog):
         chromedriver_autoinstaller.install()  # Ensure ChromeDriver is installed automatically
         driver = webdriver.Chrome(options=options)
         driver.get(self.url)
+        driver.execute_script("document.body.style.zoom='175%'")  # Zoom in by 175%
+        driver.set_window_size(self.width, self.height)  # Resize the page
         driver.execute_script("document.body.style.overflow = 'hidden';")  # Hide scrollbar
         driver.save_screenshot(path)
         driver.quit()
