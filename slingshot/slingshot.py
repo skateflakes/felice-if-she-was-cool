@@ -1,5 +1,6 @@
 import discord
 from redbot.core import commands
+import chromedriver_autoinstaller
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -19,8 +20,8 @@ class Screenshot(commands.Cog):
         options.add_argument("--headless")
         options.add_argument(f"--window-size={self.width},{self.height}")
         
-        service = Service("chromedriver")  # Ensure chromedriver is installed
-        driver = webdriver.Chrome(service=service, options=options)
+        chromedriver_autoinstaller.install()  # Ensure ChromeDriver is installed automatically
+        driver = webdriver.Chrome(options=options)
         driver.get(self.url)
         driver.save_screenshot(path)
         driver.quit()
@@ -33,5 +34,7 @@ class Screenshot(commands.Cog):
         await ctx.send(file=discord.File(filename))
         os.remove(filename)
 
-def setup(bot):  # Remove async from setup
+from redbot.core.bot import Red
+
+def setup(bot: Red):  # Remove async from setup
     bot.add_cog(Screenshot(bot))
