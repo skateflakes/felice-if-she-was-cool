@@ -11,7 +11,7 @@ class Screenshot(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.width = 530
+        self.width = 535
         self.height = 960
         self.url = "https://htfslingshot.endersfund.com/htf_slingshot/web/sidebar/weekly"
 
