@@ -12,7 +12,7 @@ class Screenshot(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.width = 540
-        self.height = 930
+        self.height = 935
         self.url = "https://htfslingshot.endersfund.com/htf_slingshot/web/sidebar/weekly"
 
     async def take_screenshot(self, path: str):
