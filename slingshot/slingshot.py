@@ -1,6 +1,5 @@
 import discord
 from redbot.core import commands
-import chromedriver_autoinstaller
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -20,19 +19,18 @@ class Screenshot(commands.Cog):
         options.add_argument("--headless")
         options.add_argument(f"--window-size={self.width},{self.height}")
         
-        chromedriver_autoinstaller.install()  # chromedriver thing idk
-        driver = webdriver.Chrome(options=options)
+                driver = webdriver.Chrome(options=options)
         driver.get(self.url)
-        driver.execute_script("document.body.style.zoom='175%'")  # zoooooooooooom
-        driver.set_window_size(self.width, self.height)  # resize Real
-        driver.execute_script("document.body.style.overflow = 'hidden';")  # hide scrollbar
+        driver.execute_script("document.body.style.zoom='175%'")  # Zoom in by 175%
+        driver.set_window_size(self.width, self.height)  # Resize the page
+        driver.execute_script("document.body.style.overflow = 'hidden';")  # Hide scrollbar
         driver.save_screenshot(path)
         driver.quit()
 
     @commands.command()
     async def slingshot(self, ctx):
         """Takes a screenshot of the predefined website at a fixed size."""
-        filename = "DeadeyeDerbyLeaderboard.png"
+        filename = "screenshot.png"
         await self.take_screenshot(filename)
         await ctx.send(file=discord.File(filename))
         os.remove(filename)
