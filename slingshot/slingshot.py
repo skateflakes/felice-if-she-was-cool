@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.options import Options
 import os
 
 class Screenshot(commands.Cog):
-    """A cog for taking website screenshots."""
+    """A cog for displaying the Deadeye Derby leaderboard."""
 
     def __init__(self, bot):
         self.bot = bot
@@ -28,7 +28,7 @@ class Screenshot(commands.Cog):
 
     @commands.command()
     async def slingshot(self, ctx):
-        """Takes a screenshot of the predefined website at a fixed size."""
+        """Display the current Deadeye Derby leaderboard."""
         filename = "screenshot.png"
         await self.take_screenshot(filename)
         await ctx.send(file=discord.File(filename))
