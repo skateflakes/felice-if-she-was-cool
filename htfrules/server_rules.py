@@ -54,10 +54,15 @@ New: {new_rule}")
             await ctx.send("Invalid section. Use A (Warnings), B (Mutes), or C (Bans).")
 
     @commands.command()
-    async def search_rule(self, ctx, *, keyword: str):
+    async def search_rule(self, ctx, keyword: str):
         """Search for a rule containing a keyword across all sections."""
         results = []
-        for section, rules in self.rules.items():
+        if len(keyword) > 1 and keyword[0].isalpha() and keyword[1:].isdigit():
+            section, index = keyword[0].upper(), int(keyword[1:]) - 1
+            if section in self.rules and 0 <= index < len(self.rules[section]):
+                await ctx.send(f"Section {section} Rule {index+1}: {self.rules[section][index]}")
+                await ctx.send("Please read the rules: https://docs.google.com/document/d/e/2PACX-1vTvMfTZy24lQihE9J6MV1Jh2hoHCRzpqx3nM73goqhHP8ydlerWNdfSvx0ag-X0XUddfHD0cvE8AIs5/pub")
+                return
             for rule in rules:
                 if keyword.lower() in rule.lower():
                     results.append(f"Section {section}: {rule}")
