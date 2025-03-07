@@ -30,6 +30,7 @@ class ServerRules(commands.Cog):
             old_rule = self.rules[section][index]
             self.rules[section][index] = new_rule
             await ctx.send(f"Rule updated in Section {section}:
+"
 Old: {old_rule}
 New: {new_rule}")
         else:
