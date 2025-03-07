@@ -18,7 +18,37 @@ class ServerRules(commands.Cog):
         section = section.upper()
         if section in self.rules:
             self.rules[section].append(rule)
-            await ctx.send(f"Rule added to Section {section}: {rule}")
+            await ctx.send(f"# Rule added to Section {section}: {rule}")
+        else:
+            await ctx.send("Invalid section. Use A (Warnings), B (Mutes), or C (Bans).")
+
+    @commands.command()
+    async def edit_rule(self, ctx, section: str, index: int, *, new_rule: str):
+        """Edit a rule in a specific section by index."""
+        section = section.upper()
+        if section in self.rules and 0 <= index < len(self.rules[section]):
+            old_rule = self.rules[section][index]
+            self.rules[section][index] = new_rule
+            await ctx.send(f"Rule updated in Section {section}:
+Old: {old_rule}
+New: {new_rule}")
+        else:
+            await ctx.send("Invalid section or index.")
+
+    @commands.command()
+    async def remove_rule(self, ctx, section: str, index: int):
+        """Remove a rule from a specific section by index."""
+        section = section.upper()
+        if section in self.rules and 0 <= index < len(self.rules[section]):
+            removed_rule = self.rules[section].pop(index)
+            await ctx.send(f"Rule removed from Section {section}: {removed_rule}")
+        else:
+            await ctx.send("Invalid section or index.")(self, ctx, section: str, *, rule: str):
+        """Add a rule to a specific section (A: Warnings, B: Mutes, C: Bans)."""
+        section = section.upper()
+        if section in self.rules:
+            self.rules[section].append(rule)
+            await ctx.send(f"# Rule added to Section {section}: {rule}")
         else:
             await ctx.send("Invalid section. Use A (Warnings), B (Mutes), or C (Bans).")
 
