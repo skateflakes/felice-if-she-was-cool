@@ -1,4 +1,4 @@
-from .server_rules_cog import ServerRules
+from .server_rules import ServerRules
 from redbot.core.bot import Red
 
 async def setup(bot: Red):
