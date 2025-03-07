@@ -31,6 +31,7 @@ class ServerRules(commands.Cog):
                 if keyword.lower() in rule.lower():
                     results.append(f"Section {section}: {rule}")
         if results:
+            await ctx.send("Please read the rules: https://docs.google.com/document/d/e/2PACX-1vTvMfTZy24lQihE9J6MV1Jh2hoHCRzpqx3nM73goqhHP8ydlerWNdfSvx0ag-X0XUddfHD0cvE8AIs5/pub")
             await ctx.send("\n".join(results))
         else:
             await ctx.send("No rules found with that keyword.")
