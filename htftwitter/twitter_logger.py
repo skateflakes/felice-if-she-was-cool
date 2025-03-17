@@ -4,7 +4,7 @@ import aiohttp
 import asyncio
 
 class TwitterLogger(commands.Cog):
-    """A cog to log new posts in the HTF Twitter community."""
+    """A cog to log new posts in a Twitter/X community."""
 
     def __init__(self, bot):
         self.bot = bot
@@ -15,12 +15,13 @@ class TwitterLogger(commands.Cog):
 
     @commands.guild_only()
     @commands.admin_or_permissions(manage_guild=True)
+    @commands.guild_only()
+    @commands.admin_or_permissions(manage_guild=True)
     @commands.command()
-    async def set_twitter(self, ctx, community_id: str, channel: discord.TextChannel):
-        """Set the Twitter community ID and log channel."""
-        await self.config.guild(ctx.guild).community_id.set(community_id)
+    async def set_channel(self, ctx, channel: discord.TextChannel):
+        """Set the channel to log new Twitter posts."""
         await self.config.guild(ctx.guild).log_channel.set(channel.id)
-        await ctx.send(f"Twitter community set to {community_id}, logging in {channel.mention}.")
+        await ctx.send(f"Log channel set to {channel.mention}.")
 
     async def monitor_twitter(self):
         await self.bot.wait_until_ready()
@@ -44,7 +45,7 @@ class TwitterLogger(commands.Cog):
     async def fetch_community_posts(self, community_id, last_post_id):
         # Mock API URL (Replace this with the actual Twitter API v2 endpoint)
         url = f"https://api.twitter.com/2/timelines/community/{community_id}.json"
-        headers = {"Authorization": "Bearer AAAAAAAAAAAAAAAAAAAAAObwzwEAAAAAfQVb9pWgj5h1k5qIH5CTKacs968%3DPML26mMZr1zszvCpkQGjt7WCVh1el51KjZ21YEK12cQ9GZQNhL"}
+        headers = {"Authorization": "Bearer YOUR_TWITTER_BEARER_TOKEN"}
 
         async with self.session.get(url, headers=headers) as response:
             if response.status == 200:
