@@ -44,7 +44,7 @@ class TwitterLogger(commands.Cog):
     async def fetch_community_posts(self, community_id, last_post_id):
         # Mock API URL (Replace this with the actual Twitter API v2 endpoint)
         url = f"https://api.twitter.com/2/timelines/community/{community_id}.json"
-        headers = {"Authorization": "Bearer YOUR_TWITTER_BEARER_TOKEN"}
+        headers = {"Authorization": "Bearer AAAAAAAAAAAAAAAAAAAAAObwzwEAAAAAfQVb9pWgj5h1k5qIH5CTKacs968%3DPML26mMZr1zszvCpkQGjt7WCVh1el51KjZ21YEK12cQ9GZQNhL"}
 
         async with self.session.get(url, headers=headers) as response:
             if response.status == 200:
