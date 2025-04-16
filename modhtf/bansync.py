@@ -1,22 +1,32 @@
 import discord
 from redbot.core import commands
-from typing import Union
 from redbot.core.commands.converter import RawUserIdConverter
+from typing import Union
+
+# ids
+ALLOWED_USER_IDS = {1}  # no one is whitelisted (yet)
 
 class BanSync(commands.Cog):
-    """Cog for synchronizing bans across all servers."""
+    """Ban a user from all servers the bot is in."""
 
     def __init__(self, bot):
         self.bot = bot
 
+    def is_authorized(self, ctx: commands.Context) -> bool:
+        return ctx.author.id in ALLOWED_USER_IDS or ctx.bot.is_owner(ctx.author)
+
     @commands.command()
-    @commands.is_owner()
     @commands.bot_has_permissions(ban_members=True)
-    async def bansync(self, ctx, user: Union[discord.User, RawUserIdConverter], *, reason: str = "No reason provided."):
+    async def bansync(self, ctx: commands.Context, user: Union[discord.User, RawUserIdConverter], *, reason: str = "No reason provided."):
         """
         Ban a user from all servers the bot is in.
-        The reason will be appended with (BanSync).
+        Appends (BanSync) to the reason.
         """
+        # 🔐 Permission check
+        if not await self.bot.is_owner(ctx.author) and ctx.author.id not in ALLOWED_USER_IDS:
+            await ctx.send("❌ You don't have permission to use this command.")
+            return
+
         reason += " (BanSync)"
         total = 0
         failed = []
@@ -40,3 +50,6 @@ class BanSync(commands.Cog):
         if failed:
             message += "\n❌ Failed in:\n" + "\n".join(failed)
         await ctx.send(message)
+
+async def setup(bot):
+    await bot.add_cog(BanSync(bot))
