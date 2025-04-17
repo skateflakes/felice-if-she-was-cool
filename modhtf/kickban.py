@@ -361,7 +361,7 @@ class KickBanMixin(MixinMeta):
                 until=None,
                 channel=None,
             )
-            await ctx.send(_("Done. That felt good."))
+            await ctx.send(_("User has been kicked from the server. They are able to rejoin with any invite at any time."))
 
     @commands.command()
     @commands.guild_only()
