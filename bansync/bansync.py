@@ -3,26 +3,26 @@ from redbot.core import commands
 from redbot.core.commands.converter import RawUserIdConverter
 from typing import Union
 
-# ids
-ALLOWED_USER_IDS = {1}  # no one is whitelisted (yet)
+# whitelisted ids
+ALLOWED_USER_IDS = {459697638124552192, 382555466968072202}
+
+# blacklisted server (htf appeals server)
+SKIPPED_GUILD_IDS = {1282000118962323538}
 
 class BanSync(commands.Cog):
-    """Ban a user from all servers the bot is in."""
+    """Ban a user from all servers the bot is in, except skipped ones."""
 
     def __init__(self, bot):
         self.bot = bot
-
-    def is_authorized(self, ctx: commands.Context) -> bool:
-        return ctx.author.id in ALLOWED_USER_IDS or ctx.bot.is_owner(ctx.author)
 
     @commands.command()
     @commands.bot_has_permissions(ban_members=True)
     async def bansync(self, ctx: commands.Context, user: Union[discord.User, RawUserIdConverter], *, reason: str = "No reason provided."):
         """
-        Ban a user from all servers the bot is in.
+        Ban a user from all servers the bot is in (except skipped ones).
         Appends (BanSync) to the reason.
         """
-        # 🔐 Permission check
+        # Permission check
         if not await self.bot.is_owner(ctx.author) and ctx.author.id not in ALLOWED_USER_IDS:
             await ctx.send("❌ You don't have permission to use this command.")
             return
@@ -35,6 +35,8 @@ class BanSync(commands.Cog):
             user = self.bot.get_user(user) or discord.Object(id=user)
 
         for guild in self.bot.guilds:
+            if guild.id in SKIPPED_GUILD_IDS:
+                continue
             if not guild.me.guild_permissions.ban_members:
                 failed.append(f"{guild.name} (no permission)")
                 continue
@@ -48,7 +50,7 @@ class BanSync(commands.Cog):
 
         message = f"✅ Banned `{user}` from {total} servers."
         if failed:
-            message += "\n❌ Failed in:\n" + "\n".join(failed)
+            message += f"\n❌ Failed in:\n" + "\n".join(failed)
         await ctx.send(message)
 
 async def setup(bot):
