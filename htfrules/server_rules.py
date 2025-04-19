@@ -10,21 +10,29 @@ WHITELISTED_GUILDS = {
 # Hardcoded rules
 RULES = {
     "a": {
-        1: "Disrespect towards other server members",
-        2: "No harassment or hate speech.",
-        3: "Keep discussions civil."
+        1: {
+            "text": "Respect all members.",
+            "subtext": "Harassment or discrimination creates a hostile environment."
+        },
+        2: {
+            "text": "No hate speech.",
+            "subtext": "We want to keep this community safe and inclusive for everyone."
+        }
     },
     "b": {
-        1: "Do not spam.",
-        2: "Use appropriate channels.",
-        3: "No excessive tagging."
+        1: {
+            "text": "No spamming.",
+            "subtext": "Spamming disrupts conversations and clutters channels."
+        }
     },
     "c": {
-        1: "Do not share NSFW content.",
-        2: "No ban evasion.",
-        3: "Respect server decisions."
+        1: {
+            "text": "No NSFW content.",
+            "subtext": "This server is intended to be safe for all age groups."
+        }
     }
 }
+
 
 RULES_DOC_LINK = "https://docs.google.com/document/d/e/2PACX-1vTvMfTZy24lQihE9J6MV1Jh2hoHCRzpqx3nM73goqhHP8ydlerWNdfSvx0ag-X0XUddfHD0cvE8AIs5/pub"
 
@@ -60,12 +68,15 @@ class RulesCog(commands.Cog):
         section = cmd[0]
         number = int(cmd[1:])
 
-        rule = RULES.get(section, {}).get(number)
-        if not rule:
-            return
+        rule_obj = RULES.get(section, {}).get(number)
+if not rule_obj:
+    return
 
-        rule_msg = f"**Rule {number} of Section {section.upper()}**:\n```{rule}```\n\n📄 Read the server rules:\n{RULES_DOC_LINK}"
-        await message.channel.send(rule_msg)
+text = rule_obj["text"]
+subtext = rule_obj["subtext"]
+
+rule_msg = f"**Rule {section.upper()}{number}**:\n{text}\n{subtext}\n\n📄 Please read the full rules here:\n{RULES_DOC_LINK}"
+await message.channel.send(rule_msg)
 
 async def setup(bot):
     await bot.add_cog(RulesCog(bot))
