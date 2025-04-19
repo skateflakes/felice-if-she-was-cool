@@ -19,8 +19,7 @@ class BanSync(commands.Cog):
     @commands.bot_has_permissions(ban_members=True)
     async def bansync(self, ctx: commands.Context, user: Union[discord.User, RawUserIdConverter], *, reason: str = "No reason provided."):
         """
-        Ban a user from all servers the bot is in (except skipped ones).
-        Appends (BanSync) to the reason.
+        Ban a user from all servers the bot is in.
         """
         # Permission check
         if not await self.bot.is_owner(ctx.author) and ctx.author.id not in ALLOWED_USER_IDS:
