@@ -1,93 +1,79 @@
 import discord
 from redbot.core import commands
+from discord.ext import commands as ext_commands
 
-class ServerRules(commands.Cog):
-    """A cog for managing server rules with sections for warnings, mutes, and bans."""
+# Only allow the cog in these guilds
+WHITELISTED_GUILDS = {
+    1033567360692523008  # this command can only work in the HTF server
+}
+
+# Hardcoded rules
+RULES = {
+    "a": {
+        1: "Respect all members.",
+        2: "No harassment or hate speech.",
+        3: "Keep discussions civil."
+    },
+    "b": {
+        1: "Do not spam.",
+        2: "Use appropriate channels.",
+        3: "No excessive tagging."
+    },
+    "c": {
+        1: "Do not share NSFW content.",
+        2: "No ban evasion.",
+        3: "Respect server decisions."
+    }
+}
+
+RULES_DOC_LINK = "https://docs.google.com/document/d/e/2PACX-1vTvMfTZy24lQihE9J6MV1Jh2hoHCRzpqx3nM73goqhHP8ydlerWNdfSvx0ag-X0XUddfHD0cvE8AIs5/pub"
+
+class RulesCog(commands.Cog):
+    """Cog for displaying rules using a custom prefix (r.)."""
 
     def __init__(self, bot):
         self.bot = bot
-        self.rules = {
-            "A": [],  # Warnings
-            "B": [],  # Mutes
-            "C": []   # Bans
-        }
+        self.custom_prefix = "r."
 
-    @commands.command()
-    async def add_rule(self, ctx, section: str, *, rule: str):
-        """Add a rule to a specific section (A: Warnings, B: Mutes, C: Bans)."""
-        section = section.upper()
-        if section in self.rules:
-            self.rules[section].append(rule)
-            await ctx.send(f"# Rule added to Section {section}: {rule}")
-        else:
-            await ctx.send("Invalid section. Use A (Warnings), B (Mutes), or C (Bans).")
+    async def cog_check(self, ctx):
+        """Restrict the cog to whitelisted servers only."""
+        return ctx.guild and ctx.guild.id in WHITELISTED_GUILDS
 
-    @commands.command()
-    async def edit_rule(self, ctx, section: str, index: int, *, new_rule: str):
-        """Edit a rule in a specific section by index."""
-        section = section.upper()
-        if section in self.rules and 0 <= index < len(self.rules[section]):
-            old_rule = self.rules[section][index]
-            self.rules[section][index] = new_rule
-            await ctx.send(f"Rule updated in Section {section}:
-"
-Old: {old_rule}
-New: {new_rule}")
-        else:
-            await ctx.send("Invalid section or index.")
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Message):
+        # Ignore bot messages or DMs
+        if message.author.bot or not message.guild:
+            return
+        if message.guild.id not in WHITELISTED_GUILDS:
+            return
 
-    @commands.command()
-    async def remove_rule(self, ctx, section: str, index: int):
-        """Remove a rule from a specific section by index."""
-        section = section.upper()
-        if section in self.rules and 0 <= index < len(self.rules[section]):
-            removed_rule = self.rules[section].pop(index)
-            await ctx.send(f"Rule removed from Section {section}: {removed_rule}")
-        else:
-            await ctx.send("Invalid section or index.")(self, ctx, section: str, *, rule: str):
-        """Add a rule to a specific section (A: Warnings, B: Mutes, C: Bans)."""
-        section = section.upper()
-        if section in self.rules:
-            self.rules[section].append(rule)
-            await ctx.send(f"# Rule added to Section {section}: {rule}")
-        else:
-            await ctx.send("Invalid section. Use A (Warnings), B (Mutes), or C (Bans).")
+        # Check for custom "r." prefix
+        if not message.content.lower().startswith(self.custom_prefix):
+            return
 
-    @commands.command()
-    async def search_rule(self, ctx, keyword: str):
-        """Search for a rule containing a keyword across all sections."""
-        results = []
-        if len(keyword) > 1 and keyword[0].isalpha() and keyword[1:].isdigit():
-            section, index = keyword[0].upper(), int(keyword[1:]) - 1
-            if section in self.rules and 0 <= index < len(self.rules[section]):
-                await ctx.send(f"Section {section} Rule {index+1}: {self.rules[section][index]}")
-                await ctx.send("Please read the rules: https://docs.google.com/document/d/e/2PACX-1vTvMfTZy24lQihE9J6MV1Jh2hoHCRzpqx3nM73goqhHP8ydlerWNdfSvx0ag-X0XUddfHD0cvE8AIs5/pub")
-                return
-            for rule in rules:
-                if keyword.lower() in rule.lower():
-                    results.append(f"Section {section}: {rule}")
-        if results:
-            await ctx.send("Please read the rules: https://docs.google.com/document/d/e/2PACX-1vTvMfTZy24lQihE9J6MV1Jh2hoHCRzpqx3nM73goqhHP8ydlerWNdfSvx0ag-X0XUddfHD0cvE8AIs5/pub")
-            await ctx.send("\n".join(results))
-        else:
-            await ctx.send("No rules found with that keyword.")
+        cmd = message.content[len(self.custom_prefix):].strip().lower()
 
-    @commands.command()
-    async def list_rules(self, ctx, section: str = None):
-        """List all rules or rules from a specific section."""
-        if section:
-            section = section.upper()
-            if section in self.rules:
-                rules = self.rules[section]
-                if rules:
-                    await ctx.send(f"Rules in Section {section}:\n" + "\n".join(rules))
-                else:
-                    await ctx.send(f"No rules in Section {section}.")
-            else:
-                await ctx.send("Invalid section. Use A (Warnings), B (Mutes), or C (Bans).")
-        else:
-            all_rules = "\n".join([f"Section {s}:\n" + "\n".join(r) for s, r in self.rules.items() if r])
-            await ctx.send(all_rules if all_rules else "No rules have been added yet.")
+        # Format must be like: r.a1, r.b3, etc.
+        if len(cmd) < 2 or not cmd[0] in RULES or not cmd[1:].isdigit():
+            return
+
+        section = cmd[0]
+        number = int(cmd[1:])
+
+        rule = RULES.get(section, {}).get(number)
+        if not rule:
+            return
+
+        embed = discord.Embed(
+            title=f"Rule {section.upper()}{number}",
+            description=rule,
+            color=discord.Color.blue()
+        )
+        embed.set_footer(text="Please read the full rules document:")
+        embed.url = RULES_DOC_LINK
+
+        await message.channel.send(embed=embed)
+        await message.channel.send(f"📄 {RULES_DOC_LINK}")
 
 async def setup(bot):
-    await bot.add_cog(ServerRules(bot))
+    await bot.add_cog(RulesCog(bot))
