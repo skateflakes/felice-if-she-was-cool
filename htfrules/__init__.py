@@ -1,5 +1,4 @@
-from .server_rules import ServerRules
-from redbot.core.bot import Red
+from .rulescog import RulesCog
 
-async def setup(bot: Red):
-    await bot.add_cog(ServerRules(bot))
+async def setup(bot):
+    await bot.add_cog(RulesCog(bot))
