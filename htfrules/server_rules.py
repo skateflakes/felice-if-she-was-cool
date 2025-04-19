@@ -225,10 +225,10 @@ class RulesCog(commands.Cog):
         subtext = rule_obj["subtext"]
 
         embed = discord.Embed(
-            title=f"Rule {section.upper()}{number}: {text}",
-            description=subtext,
-            color=discord.Color.red()
-        )
+        title=f"Rule {section.upper()}{number}: {rule_obj['text']}",
+        description=f"- {rule_obj['subtext']}",
+        color=discord.Color.orange()
+    )
         embed.set_footer(text="📄 Please read the full rules document.")
         embed.url = RULES_DOC_LINK
 
