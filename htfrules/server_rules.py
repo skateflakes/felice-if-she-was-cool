@@ -3,8 +3,7 @@ from redbot.core import commands
 
 # Whitelisted guilds
 WHITELISTED_GUILDS = {
-    123456789012345678,  # Replace with real guild IDs
-    987654321098765432
+    1033567360692523008  # Replace with real guild IDs
 }
 
 # Rules with subrules
