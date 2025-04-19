@@ -10,7 +10,7 @@ WHITELISTED_GUILDS = {
 # Hardcoded rules
 RULES = {
     "a": {
-        1: "Respect all members.",
+        1: "Disrespect towards other server members",
         2: "No harassment or hate speech.",
         3: "Keep discussions civil."
     },
@@ -64,7 +64,7 @@ class RulesCog(commands.Cog):
         if not rule:
             return
 
-        rule_msg = f"**Rule {number} of Section {section.upper()}**:\n{rule}\n\n📄 Read the server rules:\n{RULES_DOC_LINK}"
+        rule_msg = f"**Rule {number} of Section {section.upper()}**:\n```{rule}```\n\n📄 Read the server rules:\n{RULES_DOC_LINK}"
         await message.channel.send(rule_msg)
 
 async def setup(bot):
