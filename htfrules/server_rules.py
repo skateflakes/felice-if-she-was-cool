@@ -10,13 +10,78 @@ WHITELISTED_GUILDS = {
 RULES = {
     "a": {
         1: {
-            "text": "Respect all members.",
-            "subtext": "Harassment or discrimination creates a hostile environment."
+            "text": "Disrespect towards other server members",
+            "subtext": "We want this server to be enjoyable for everyone. Constructive criticism isn't disrespectful. Please respect the members of the server."
         },
         2: {
-            "text": "No hate speech.",
-            "subtext": "This includes slurs, threats, and targeting."
+            "text": "Excessively using swear words",
+            "subtext": "Swearing is 100% allowed. Please don't excessively swear in the chat."
         }
+        3: {
+            "text": "Use of languages other than English",
+            "subtext": "This is to make it easy to moderate messages. We ask you to use English on this server."
+        }
+        4: {
+            "text": "Excessively discussing about banned or problematic people",
+            "subtext": "We ask you to not bring up any problematic people, as it causes issues.\n- Discussion about controversial users are not allowed anywhere on the server. Move it to Direct Messages."
+        }
+        5: {
+            "text": "Posting things outside of specific channels",
+            "subtext": "Post memes in #memes, and post art and other things you made in #arts-and-crafts."
+        }
+        6: {
+            "text": "Having an unpingable username/nickname",
+            "subtext": "“Fancy” text in your name isn't allowed, we will ask you to change it, or change your nickname so it's easier for users to ping you."
+        }
+        7: {
+            "text": "Voice Chat Misusage",
+            "subtext": "Screaming, playing loud music, and screen sharing inappropriate content\n- Do not troll, or constantly skip audio in the Music VC."
+        }
+        8: {
+            "text": "Asking for roles that are not available in 🔍 Browse Channels",
+            "subtext": "We will never release any staff applications. Moderation is handpicked by Senior Administrators."
+        }
+        9: {
+            "text": "Misuse of the ping function",
+            "subtext": "Do not mass ping users in the server.\n- Do not ping the HTF crew or Vixa Games without a proper reason. (“Where’s HTF?”)"
+        }
+        10: {
+            "text": "Having member(s) of the staff team blocked",
+            "subtext": "If a staff member is being a problem to you or anyone else in the server, or the fandom itself, please DM a Senior Administrator, and we will look into it.\n- We have this rule in place because we need to DM you for important things, like if you have received a warning, etc."
+        }
+        11: {
+            "text": "Minimodding",
+            "subtext": "If a user is breaking the rules of the server, ping an online staff member. **More info is in the rules doc.**"
+        }
+        12: {
+            "text": "Posting sensitive attachments without a warning",
+            "subtext": "Attachments that are loud, flashing, etc.\n- Please apply a spoiler to the attachment instead, with a warning shown."
+        }
+        13: {
+            "text": "Erotic Roleplaying, inside or outside the #roleplay channel",
+            "subtext": "Do that in Direct Messages __with the user’s permission__, not in the server."
+        }
+        14: {
+            "text": "Bypassing AutoMod words",
+            "subtext": "We have a set of blacklisted users from the server and we do not want them brought up."
+        }
+        15: {
+            "text": "Venting in the public chat",
+            "subtext": "Please don't vent in the public chat. Keep things like this in Direct Messages as it can lead to topics not allowed for the server."
+        }
+        16: {
+            "text": "Spoilers outside of the #spoilers channel",
+            "subtext": "For access to the spoilers channel you must select the `@Spoilers` role via <id:customization>"
+        }
+        17: {
+            "text": "Posting AI content",
+            "subtext": "Posting AI (mostly images) is not allowed."
+        }
+        18: {
+            "text": "Going off-topic in <#1165649280506269777> or <#1165649355370401832>",
+            "subtext": "Please use #htf for talking about HTF and #mondo for talking about other MondoMedia content (including HTF).\n- This also includes forcibly changing the subject in the other channels."
+        }
+        
     },
     "b": {
         1: {
