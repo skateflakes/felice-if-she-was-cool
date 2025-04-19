@@ -84,8 +84,36 @@ RULES = {
     },
     "b": {
         1: {
-            "text": "No spamming.",
-            "subtext": "Spamming disrupts communication and floods channels."
+            "text": "Spamming the chat",
+            "subtext": "Using bots is okay, don't go too overboard with them.\n- Do not purposefully spam the chat."
+        },
+        2: {
+            "text": "Not listening to Server Staff",
+            "subtext": "Listen to what the server staff tells you to do.\n- Do not abuse loopholes."
+        },
+        3: {
+            "text": "Tampering with the bots or abusing them",
+            "subtext": "If there's a bug with a bot, please report them to a staff member instead!"
+        },
+        4: {
+            "text": "Usage of foul language",
+            "subtext": "Do not use the ableist, racist, and homophobic slurs.\n  - Usage of these slurs, even being part of these, are also not allowed.\n- You will be given a one week timeout by AutoMod if you use these slurs."
+        },
+        5: {
+            "text": "Unsanitary jokes towards people",
+            "subtext": "Don’t use these towards people. Since Mondo Media’s shows have unsanitary jokes, we’re gonna allow it on this server but not excessively."
+        },
+        6: {
+            "text": "Serious politician discussion/argument",
+            "subtext": "Please keep conversations like these outside of the server."
+        },
+        7: {
+            "text": "Sending offensive memes",
+            "subtext": "You will be removed from the <#1165650627901272064> channel for this. Otherwise, it could lead to a ban too."
+        },
+        8: {
+            "text": "Starting any sort of drama in the chat",
+            "subtext": "We do not want **any** drama on this server. If you join the server with the purpose of bringing up drama (rather than letting a staff member know first) will just lead you to a Section C offense (a ban)."
         }
     },
     "c": {
