@@ -64,7 +64,7 @@ class RulesCog(commands.Cog):
         if not rule:
             return
 
-        rule_msg = f"**Rule {section.upper()}{number}**:\n{rule}\n\n📄 Please read the full rules here:\n{RULES_DOC_LINK}"
+        rule_msg = f"**Rule {number} of Section {section.upper()}**:\n{rule}\n\n📄 Read the server rules:\n{RULES_DOC_LINK}"
         await message.channel.send(rule_msg)
 
 async def setup(bot):
