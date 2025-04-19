@@ -118,8 +118,63 @@ RULES = {
     },
     "c": {
         1: {
-            "text": "No NSFW content.",
-            "subtext": "This server is meant to be safe for all ages."
+            "text": "Breaking Discord’s [Terms of Service](https://discord.com/terms) or [Community Guidelines](https://discord.com/guidelines)",
+            "subtext": "If you are under the age of 13, you will be banned. You may rejoin when you're 13.
+            \n   - **If you lie about your age to stay in the server until you turn 13, you will be permanently banned without an appeal. In order to comply with the law and Discord’s ToS, we have to strictly enforce this rule.**"
+            \n- If you raid the server or organize one, you will be banned along with your Discord account reported.
+            \n  - If you have been known to raid other HTF servers, you will be banned from this server.
+
+        },
+        2: {
+            "text": "Incitement or Discussion of illegal activity",
+            "subtext": "Which includes:\n
+            \n  - Doxxing
+            \n  - Pirated Content
+            \n  - Real-life threats
+            \n  - ETC
+            "
+        },
+        3: {
+            "text": "Posting inappropriate content",
+            "subtext": "Not Safe For Work (NSFW) isn't allowed and will never be tolerated ever.\n   - Posting NSFW art is also not tolerated.\nDrawn gore is okay (as Happy Tree Friends is mainly gruesome), **real life gore (including rat abuse videos) leads to a ban.**
+            \n- This rule also complies to any form of fetish content.
+            "
+        },
+        4: {
+            "text": "Discrimination",
+            "subtext": "Inappropriate discussions discriminating against anyone based on their race, sexuality, religion, gender, etc, is not tolerated at all.\n- Deadnaming and misgendering others will also result in a ban."
+        },
+        5: {
+            "text": "Impersonation",
+            "subtext": "If you are pretending to be someone else, you will be asked to change your appearance. Otherwise, you will be banned.\n- Impersonating staff will lead to an immediate ban and it cannot be appealed."
+        },
+        6: {
+            "text": "Joining the server to troll",
+            "subtext": "Just don't. Find something better to do."
+        },
+        7: {
+            "text": "Attempting to circumvent a moderation action",
+            "subtext": "This server has autoroles, if you get caught evading a mute your mute will stay permanent and unappealable.\n- Asking a staff member to revoke moderation action also counts\n- We will find out if you attempt to spy on the server."
+        },
+        8: {
+            "text": "Sending malicious attachments/links",
+            "subtext": "If your Discord account was hacked, send in an appeal and we will unban you and give you directions on how to secure your account."
+        },
+        9: {
+            "text": "Sending any official paid Mondo products in the chat",
+            "subtext": "Continuation to Rule C2. We’re going to strictly enforce this rule and sending attachments, like the Still Alive package or The Crackpet Show will result in a permanent ban."
+        },
+        10: {
+            "text": "Attempting to start any argument with staff after receiving infractions",
+            "subtext": "Use common sense. Either take the moderation action or appeal. Do not argue with staff about it."
+        },
+        11: {
+            "text": "Unsolicited Direct Messages",
+            "subtext": "Do not DM advertise to users of the server, unless they have asked. There is an ads channel, use it!\n- Do not message the Vixa Games staff team any complaints about the server, use the feedback form instead, and we will do our best to improve the server."
+        },
+        12: {
+            "text": "Leaking Member-Only Content",
+            "subtext": "Leaking any previews of MondoMedia’s membership-only features (such as HTF Episode Previews) in the server isn't allowed.\n- Sending MondoMedia’s community posts will only result in a warning with your message being deleted."
         }
     }
 }
