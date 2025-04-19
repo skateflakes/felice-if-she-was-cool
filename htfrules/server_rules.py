@@ -72,9 +72,9 @@ class RulesCog(commands.Cog):
         subtext = rule_obj["subtext"]
 
         rule_msg = (
-            f"**Rule {section.upper()}{number}**:\n"
-            f"{text}\n"
-            f"{subtext}\n\n"
+            f"**Rule {number} of Section {section.upper()}**:\n"
+            f"```{text}```\n"
+            f"- {subtext}\n\n"
             f"📄 Please read the full rules here:\n{RULES_DOC_LINK}"
         )
 
