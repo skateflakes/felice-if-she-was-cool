@@ -64,16 +64,8 @@ class RulesCog(commands.Cog):
         if not rule:
             return
 
-        embed = discord.Embed(
-            title=f"Rule {section.upper()}{number}",
-            description=rule,
-            color=discord.Color.blue()
-        )
-        embed.set_footer(text="Please read the full rules document:")
-        embed.url = RULES_DOC_LINK
-
-        await message.channel.send(embed=embed)
-        await message.channel.send(f"📄 {RULES_DOC_LINK}")
+        rule_msg = f"**Rule {section.upper()}{number}**:\n{rule}\n\n📄 Please read the full rules here:\n{RULES_DOC_LINK}"
+        await message.channel.send(rule_msg)
 
 async def setup(bot):
     await bot.add_cog(RulesCog(bot))
