@@ -224,14 +224,15 @@ class RulesCog(commands.Cog):
         text = rule_obj["text"]
         subtext = rule_obj["subtext"]
 
-        rule_msg = (
-            f"**Rule {number} of Section {section.upper()}**:\n"
-            f"```{text}```\n"
-            f"- {subtext}\n\n"
-            f"📄 Please read the full rules here:\n{RULES_DOC_LINK}"
+        embed = discord.Embed(
+            title=f"Rule {section.upper()}{number}: {text}",
+            description=subtext,
+            color=discord.Color.red()
         )
+        embed.set_footer(text="📄 Please read the full rules document.")
+        embed.url = RULES_DOC_LINK
 
-        await message.channel.send(rule_msg)
+        await message.channel.send(embed=embed)
 
 
 async def setup(bot):
