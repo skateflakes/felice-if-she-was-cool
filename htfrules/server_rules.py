@@ -120,10 +120,9 @@ RULES = {
         1: {
             "text": "Breaking Discord’s [Terms of Service](https://discord.com/terms) or [Community Guidelines](https://discord.com/guidelines)",
             "subtext": "If you are under the age of 13, you will be banned. You may rejoin when you're 13.
-            \n   - **If you lie about your age to stay in the server until you turn 13, you will be permanently banned without an appeal. In order to comply with the law and Discord’s ToS, we have to strictly enforce this rule.**"
+            \n   - **If you lie about your age to stay in the server until you turn 13, you will be permanently banned without an appeal. In order to comply with the law and Discord’s ToS, we have to strictly enforce this rule.**
             \n- If you raid the server or organize one, you will be banned along with your Discord account reported.
-            \n  - If you have been known to raid other HTF servers, you will be banned from this server.
-
+            \n  - If you have been known to raid other HTF servers, you will be banned from this server."
         },
         2: {
             "text": "Incitement or Discussion of illegal activity",
@@ -131,14 +130,12 @@ RULES = {
             \n  - Doxxing
             \n  - Pirated Content
             \n  - Real-life threats
-            \n  - ETC
-            "
+            \n  - ETC"
         },
         3: {
             "text": "Posting inappropriate content",
             "subtext": "Not Safe For Work (NSFW) isn't allowed and will never be tolerated ever.\n   - Posting NSFW art is also not tolerated.\nDrawn gore is okay (as Happy Tree Friends is mainly gruesome), **real life gore (including rat abuse videos) leads to a ban.**
-            \n- This rule also complies to any form of fetish content.
-            "
+            \n- This rule also complies to any form of fetish content."
         },
         4: {
             "text": "Discrimination",
