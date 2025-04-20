@@ -5,7 +5,6 @@ HTF_SERVER = {
     1033567360692523008  # HTF server exclusive command
 }
 
-# Rules
 RULES = {
     "a": {
         1: {
@@ -144,7 +143,7 @@ RULES = {
             "subtext": (
                 "Not Safe For Work (NSFW) isn't allowed and will never be tolerated ever.\n"
                 "- Posting NSFW art is also not tolerated.\n"
-                "Drawn gore is okay (as Happy Tree Friends is mainly gruesome), **real life gore (including rat abuse videos) leads to a ban.**\n"
+                "- Drawn gore is okay (as Happy Tree Friends is mainly gruesome), **real life gore (including rat abuse videos) leads to a ban.**\n"
                 "- This rule also complies to any form of fetish content."
             )
         },
@@ -198,7 +197,7 @@ class RulesCog(commands.Cog):
         self.custom_prefix = "r."
 
     async def cog_check(self, ctx):
-        """Restrict the cog to whitelisted servers only."""
+        """This cog can only be used in the HTF server."""
         return ctx.guild and ctx.guild.id in HTF_SERVER
 
     @commands.Cog.listener()
