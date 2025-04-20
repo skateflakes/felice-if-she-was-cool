@@ -20,22 +20,22 @@ class BanSync(commands.Cog):
     async def bansync(self, ctx: commands.Context, user: Union[discord.User, RawUserIdConverter], *, reason: str = "No reason provided."):
         """Ban a user from all servers the bot is in."""
 
-        # Permission check
+        # permissions
         if not await self.bot.is_owner(ctx.author) and ctx.author.id not in ALLOWED_USER_IDS:
             await ctx.send("❌ You don't have permission to use this command.")
             return
 
-        # Prevent self-ban
+        # prevent the user from self-banning
         if isinstance(user, discord.User) and user.id == ctx.author.id:
             await ctx.send("🚫 You can't ban yourself.")
             return
 
-        # Prevent banning bots
+        # can't ban bots either
         if isinstance(user, discord.User) and user.bot:
             await ctx.send("🚫 You can't ban bots.")
             return
 
-        # Support ID-based lookup fallback
+        # id lookup
         if isinstance(user, int):
             fetched_user = self.bot.get_user(user)
             if fetched_user and fetched_user.bot:
