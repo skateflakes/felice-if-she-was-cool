@@ -4,13 +4,13 @@ from redbot.core.commands.converter import RawUserIdConverter
 from typing import Union
 
 # whitelisted ids
-ALLOWED_USER_IDS = {459697638124552192, 382555466968072202}
+ALLOWED_USER_IDS = {459697638124552192, 382555466968072202, 637695016143159326}
 
 # blacklisted server (htf appeals server)
 SKIPPED_GUILD_IDS = {1282000118962323538}
 
 class BanSync(commands.Cog):
-    """Ban a user from all servers the bot is in, except skipped ones."""
+    """Ban a user from all servers the bot is in."""
 
     def __init__(self, bot):
         self.bot = bot
@@ -18,20 +18,37 @@ class BanSync(commands.Cog):
     @commands.command()
     @commands.bot_has_permissions(ban_members=True)
     async def bansync(self, ctx: commands.Context, user: Union[discord.User, RawUserIdConverter], *, reason: str = "No reason provided."):
-        """
-        Ban a user from all servers the bot is in.
-        """
+        """Ban a user from all servers the bot is in."""
+
         # Permission check
         if not await self.bot.is_owner(ctx.author) and ctx.author.id not in ALLOWED_USER_IDS:
             await ctx.send("❌ You don't have permission to use this command.")
             return
 
+        # Prevent self-ban
+        if isinstance(user, discord.User) and user.id == ctx.author.id:
+            await ctx.send("🚫 You can't ban yourself.")
+            return
+
+        # Prevent banning bots
+        if isinstance(user, discord.User) and user.bot:
+            await ctx.send("🚫 You can't ban bots.")
+            return
+
+        # Support ID-based lookup fallback
+        if isinstance(user, int):
+            fetched_user = self.bot.get_user(user)
+            if fetched_user and fetched_user.bot:
+                await ctx.send("🚫 You can't ban bots.")
+                return
+            if user == ctx.author.id:
+                await ctx.send("🚫 You can't ban yourself.")
+                return
+            user = fetched_user or discord.Object(id=user)
+
         reason += " (BanSync)"
         total = 0
         failed = []
-
-        if isinstance(user, int):
-            user = self.bot.get_user(user) or discord.Object(id=user)
 
         for guild in self.bot.guilds:
             if guild.id in SKIPPED_GUILD_IDS:
@@ -51,6 +68,7 @@ class BanSync(commands.Cog):
         if failed:
             message += f"\n❌ Failed in:\n" + "\n".join(failed)
         await ctx.send(message)
+
 
 async def setup(bot):
     await bot.add_cog(BanSync(bot))
