@@ -1,7 +1,7 @@
 import discord
 from redbot.core import commands
 
-WHITELISTED_GUILDS = {
+HTF_SERVER = {
     1033567360692523008  # HTF server exclusive command
 }
 
@@ -120,7 +120,7 @@ RULES = {
             "text": "Breaking Discord’s [Terms of Service](https://discord.com/terms) or [Community Guidelines](https://discord.com/guidelines)",
             "subtext": (
                 "If you are under the age of 13, you will be banned. You may rejoin when you're 13.\n"
-                "- **If you lie about your age to stay in the server until you turn 13, you will be permanently banned without an appeal. "
+                "  - **If you lie about your age to stay in the server until you turn 13, you will be permanently banned without an appeal. "
                 "In order to comply with the law and Discord’s ToS, we have to strictly enforce this rule.**\n"
                 "- If you raid the server or organize one, you will be banned along with your Discord account reported.\n"
                 "- If you have been known to raid other HTF servers, you will be banned from this server."
@@ -145,7 +145,6 @@ RULES = {
                 "- This rule also complies to any form of fetish content."
             )
         },
-        # Remaining section c rules stay unchanged...
         4: {
             "text": "Discrimination",
             "subtext": "Inappropriate discussions discriminating against anyone based on their race, sexuality, religion, gender, etc, is not tolerated at all.\n- Deadnaming and misgendering others will also result in a ban."
@@ -189,7 +188,7 @@ RULES_DOC_LINK = "https://docs.google.com/document/d/e/2PACX-1vTvMfTZy24lQihE9J6
 
 
 class RulesCog(commands.Cog):
-    """Custom rules cog using r. prefix and subrule support."""
+    """Display the rules for the HTF server."""
 
     def __init__(self, bot):
         self.bot = bot
@@ -197,13 +196,13 @@ class RulesCog(commands.Cog):
 
     async def cog_check(self, ctx):
         """Restrict the cog to whitelisted servers only."""
-        return ctx.guild and ctx.guild.id in WHITELISTED_GUILDS
+        return ctx.guild and ctx.guild.id in HTF_SERVER
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if message.author.bot or not message.guild:
             return
-        if message.guild.id not in WHITELISTED_GUILDS:
+        if message.guild.id not in HTF_SERVER:
             return
 
         if not message.content.lower().startswith(self.custom_prefix):
