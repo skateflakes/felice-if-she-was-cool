@@ -37,7 +37,7 @@ RULES = {
             "subtext": "Screaming, playing loud music, and screen sharing inappropriate content\n- Do not troll, or constantly skip audio in the Music VC."
         },
         8: {
-            "text": "Asking for roles that are not available in 🔍 Browse Channels",
+            "text": "Asking for roles that are not available in <id:browse>",
             "subtext": "We will never release any staff applications. Moderation is handpicked by Senior Administrators."
         },
         9: {
@@ -78,7 +78,7 @@ RULES = {
         },
         18: {
             "text": "Going off-topic in <#1165649280506269777> or <#1165649355370401832>",
-            "subtext": "Please use #htf for talking about HTF and #mondo for talking about other MondoMedia content (including HTF).\n- This also includes forcibly changing the subject in the other channels."
+            "subtext": "Please use <#1165649280506269777> for talking about HTF and <#1165649355370401832> for talking about other MondoMedia content (including HTF).\n- This also includes forcibly changing the subject in the other channels."
         }
     },
     "b": {
@@ -117,13 +117,16 @@ RULES = {
     },
     "c": {
         1: {
-            "text": "Breaking Discord’s [Terms of Service](https://discord.com/terms) or [Community Guidelines](https://discord.com/guidelines)",
+            "text": "Breaking Discord’s Terms of Service or Community Guidelines",
             "subtext": (
                 "If you are under the age of 13, you will be banned. You may rejoin when you're 13.\n"
                 "  - **If you lie about your age to stay in the server until you turn 13, you will be permanently banned without an appeal. "
                 "In order to comply with the law and Discord’s ToS, we have to strictly enforce this rule.**\n"
                 "- If you raid the server or organize one, you will be banned along with your Discord account reported.\n"
-                "- If you have been known to raid other HTF servers, you will be banned from this server."
+                "- If you have been known to raid other HTF servers, you will be banned from this server.\n\n"
+                "Please read Discord's Terms of Service and Community Guidelines:"
+                "https://discord.com/terms\n"
+                "https://discord.com/guidelines"
             )
         },
         2: {
