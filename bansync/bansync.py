@@ -10,7 +10,7 @@ ALLOWED_USER_IDS = {459697638124552192, 382555466968072202, 637695016143159326}
 SKIPPED_GUILD_IDS = {1282000118962323538}
 
 class BanSync(commands.Cog):
-    """Ban a user from all servers the bot is in."""
+    """Ban a user from all servers the bot is in. Use this command carefully because once it's run on someone, it cannot be reversed."""
 
     def __init__(self, bot):
         self.bot = bot
