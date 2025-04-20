@@ -142,7 +142,7 @@ RULES = {
             "text": "Posting inappropriate content",
             "subtext": (
                 "Not Safe For Work (NSFW) isn't allowed and will never be tolerated ever.\n"
-                "- Posting NSFW art is also not tolerated.\n"
+                "  - Posting NSFW art is also not tolerated.\n"
                 "- Drawn gore is okay (as Happy Tree Friends is mainly gruesome), **real life gore (including rat abuse videos) leads to a ban.**\n"
                 "- This rule also complies to any form of fetish content."
             )
