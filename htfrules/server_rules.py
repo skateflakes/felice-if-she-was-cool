@@ -124,7 +124,7 @@ RULES = {
                 "In order to comply with the law and Discord’s ToS, we have to strictly enforce this rule.**\n"
                 "- If you raid the server or organize one, you will be banned along with your Discord account reported.\n"
                 "- If you have been known to raid other HTF servers, you will be banned from this server.\n\n"
-                "Please read Discord's Terms of Service and Community Guidelines:"
+                "**__Please read Discord's Terms of Service and Community Guidelines:__**\n"
                 "https://discord.com/terms\n"
                 "https://discord.com/guidelines"
             )
