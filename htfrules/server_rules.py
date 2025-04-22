@@ -98,7 +98,7 @@ RULES = {
         },
         4: {
             "text": "Usage of foul language",
-            "subtext": "Do not use the ableist, racist, and homophobic slurs.\n  - Usage of these slurs, even being part of these, are also not allowed.\n- You will be given a one week timeout by AutoMod if you use these slurs."
+            "subtext": "Do not use the ableist, racist, and homophobic slurs.\n  - Usage of these slurs, even being part of these, are also not allowed.\n   - You will be given a one week timeout by AutoMod if you use these slurs.\n- This also includes discussion about HTF Strandead Level 19 (and even posting an image of it)."
         },
         5: {
             "text": "Unsanitary jokes towards people",
