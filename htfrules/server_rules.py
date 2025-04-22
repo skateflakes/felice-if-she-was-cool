@@ -27,7 +27,7 @@ RULES = {
             "text": "Posting things outside of specific channels",
             "subtext": (
                 "Post memes in <#1165650627901272064>, and post art and other things you made in <#1165650489715724288>."
-                "n\- This also includes roleplaying outside of <#1350629370322096209> or <#1165650655122309251>."
+                "\n- This also includes roleplaying outside of <#1350629370322096209> or <#1165650655122309251>."
             )          
         },
         6: {
