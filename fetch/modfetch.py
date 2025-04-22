@@ -1,8 +1,8 @@
 import discord
 from redbot.core import commands
 from datetime import datetime
+from asyncio import TimeoutError
 
-# mock
 MOCK_LOGS = [
     {
         "user_id": "1234567890",
@@ -19,15 +19,16 @@ MOCK_LOGS = [
         "guild_name": "Chill Zone",
         "mod_name": "Admin123",
         "timestamp": "2025-03-25T08:45:00"
-    },
+    }
 ]
 
 class ModFetch(commands.Cog):
-    """Fetch mod logs for a user."""
+    """Fetch mod logs for a user (with pagination)."""
 
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def fetch(self, ctx, user: discord.User):
         """Fetch warnings, kicks, bans for a user across servers."""
@@ -36,9 +37,8 @@ class ModFetch(commands.Cog):
             await ctx.send(f"✅ No logs found for `{user}`.")
             return
 
-        # sort the logs newest first
+        # Sort logs by most recent
         user_logs.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
-
         pages = self.paginate_logs(user_logs, user)
 
         current = 0
@@ -107,3 +107,8 @@ class ModFetch(commands.Cog):
             pages.append(embed)
 
         return pages
+
+    @fetch.error
+    async def fetch_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send("🚫 You need the **Manage Messages** permission to use this command.")
