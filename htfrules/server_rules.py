@@ -193,7 +193,7 @@ RULES = {
     }
 }
 
-RULES_DOC_LINK = "https://docs.google.com/document/d/e/2PACX-1vTvMfTZy24lQihE9J6MV1Jh2hoHCRzpqx3nM73goqhHP8ydlerWNdfSvx0ag-X0XUddfHD0cvE8AIs5/pub"
+RULES_DOC_LINK = "https://docs.google.com/document/d/10KYIGh5H1lOHLQkVHPEQb8Z2zHSQcvNVpfQq7GtxNMg/edit"
 
 
 class RulesCog(commands.Cog):
