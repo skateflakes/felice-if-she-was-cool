@@ -122,7 +122,7 @@ RULES = {
         },
         10: {
             "text": "Questionable roleplays (as an adult) without confirming anyone’s age, or otherwise, roleplaying around minors.",
-            "subtext": "We do not want any incidents with adults roleplaying without not confirming anyone’s age.\n- This includes questionable roleplaying around minors (which could even lead to a ban depending on the situation)"
+            "subtext": "We do not want any incidents with adults roleplaying without not confirming anyone’s age.\n- This includes questionable roleplaying around minors (which could even lead to a ban depending on the situation)."
         }
     },
     "c": {
