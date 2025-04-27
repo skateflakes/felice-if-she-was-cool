@@ -118,7 +118,11 @@ RULES = {
         },
         9: {
             "text": "Jokes about mental illnesses",
-            "subtext": "This is self-explanatory."
+            "subtext": "The rule speaks for itself."
+        },
+        10: {
+            "text": "Questionable roleplays (as an adult) without confirming anyone’s age, or otherwise, roleplaying around minors.",
+            "subtext": "We do not want any incidents with adults roleplaying without not confirming anyone’s age.\n- This includes questionable roleplaying around minors (which could even lead to a ban depending on the situation)"
         }
     },
     "c": {
@@ -139,10 +143,10 @@ RULES = {
             "text": "Incitement or Discussion of illegal activity",
             "subtext": (
                 "Which includes:\n"
-                "- Doxxing\n"
-                "- Pirated Content\n"
-                "- Real-life threats\n"
-                "- ETC"
+                "  - Doxxing\n"
+                "  - Pirated Content\n"
+                "  - Real-life threats\n"
+                "  - ETC"
             )
         },
         3: {
