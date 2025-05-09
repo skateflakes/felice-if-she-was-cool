@@ -114,7 +114,7 @@ RULES = {
         },
         8: {
             "text": "Starting any sort of drama in the chat",
-            "subtext": "We do not want **any** drama on this server. If you join the server with the purpose of bringing up drama (rather than letting a staff member know first) will just lead you to a Section C offense (a ban)."
+            "subtext": "We do not want **any** drama on this server. If you join the server with the purpose of bringing up drama (rather than letting a staff member know first) will just lead you to a Section C offense (a ban).\n- Ragebaiting other members of the server also applies to this."
         },
         9: {
             "text": "Jokes about mental illnesses",
