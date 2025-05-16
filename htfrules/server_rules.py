@@ -210,53 +210,34 @@ class RulesCog(commands.Cog):
         return ctx.guild and ctx.guild.id in HTF_SERVER
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
-        if message.author.bot or not message.guild:
-            return
-        if message.guild.id not in HTF_SERVER:
-            return
-        if not message.content.lower().startswith(self.custom_prefix):
-            return
+async def on_message(self, message: discord.Message):
+    if message.author.bot or not message.guild:
+        return
+    if message.guild.id not in HTF_SERVER:
+        return
 
-        cmd = message.content[len(self.custom_prefix):].strip().lower()
+    if not message.content.lower().startswith(self.custom_prefix):
+        return
 
-        if len(cmd) < 2 or not cmd[0] in RULES or not cmd[1:].isdigit():
-            return
+    cmd = message.content[len(self.custom_prefix):].strip()
+    if not cmd:
+        return
 
-        section = cmd[0]
-        number = int(cmd[1:])
-
-        rule_obj = RULES.get(section, {}).get(number)
-        if not rule_obj:
-            return
-
-        embed = discord.Embed(
-            title=f"Rule {section.upper()}{number}: {rule_obj['text']}",
-            description=f"- {rule_obj['subtext']}",
-            color=0xc2e0b4
-        )
-        embed.set_footer(text="📄 Please read the full rules document.")
-        embed.url = RULES_DOC_LINK
-
-        await message.channel.send(embed=embed)
-
-    @commands.command(name="find")
-    async def r_find(self, ctx, *, keyword: str):
-        """Search for a rule by keyword."""
-        if ctx.guild.id not in HTF_SERVER:
-            return
-
+    # Check if it's a search
+    if cmd.lower().startswith("search "):
+        keyword = cmd[7:].strip().lower()
+        if not keyword:
+            return await message.channel.send("❌ Please include a keyword to search.")
+        
         results = []
-
         for section, rules in RULES.items():
             for num, data in rules.items():
                 combined = (data["text"] + " " + data["subtext"]).lower()
-                if keyword.lower() in combined:
-                    results.append(f"**Section {section.upper()}{num}**: {data['text']}")
+                if keyword in combined:
+                    results.append(f"**Rule {section.upper()}{num}**: {data['text']}")
 
         if not results:
-            await ctx.send("❌ No matching rules found.")
-            return
+            return await message.channel.send("❌ No matching rules found.")
 
         if len(results) > 10:
             results = results[:10]
@@ -268,5 +249,27 @@ class RulesCog(commands.Cog):
             color=0xc2e0b4
         )
         embed.set_footer(text="📄 For full context, view the rule directly or read the rules document.")
-        await ctx.send(embed=embed)
+        return await message.channel.send(embed=embed)
+
+    # Handle single rule like r.a1
+    if len(cmd) < 2 or not cmd[0] in RULES or not cmd[1:].isdigit():
+        return
+
+    section = cmd[0]
+    number = int(cmd[1:])
+
+    rule_obj = RULES.get(section, {}).get(number)
+    if not rule_obj:
+        return
+
+    embed = discord.Embed(
+        title=f"Rule {section.upper()}{number}: {rule_obj['text']}",
+        description=f"- {rule_obj['subtext']}",
+        color=0xc2e0b4
+    )
+    embed.set_footer(text="📄 Please read the full rules document.")
+    embed.url = RULES_DOC_LINK
+
+    await message.channel.send(embed=embed)
+
 
