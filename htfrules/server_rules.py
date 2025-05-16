@@ -199,7 +199,6 @@ RULES = {
 
 RULES_DOC_LINK = "https://docs.google.com/document/d/10KYIGh5H1lOHLQkVHPEQb8Z2zHSQcvNVpfQq7GtxNMg/edit"
 
-
 class RulesCog(commands.Cog):
     """Display the rules for the HTF server."""
 
@@ -208,7 +207,6 @@ class RulesCog(commands.Cog):
         self.custom_prefix = "r."
 
     async def cog_check(self, ctx):
-        """This cog can only be used in the HTF server."""
         return ctx.guild and ctx.guild.id in HTF_SERVER
 
     @commands.Cog.listener()
@@ -217,7 +215,6 @@ class RulesCog(commands.Cog):
             return
         if message.guild.id not in HTF_SERVER:
             return
-
         if not message.content.lower().startswith(self.custom_prefix):
             return
 
@@ -233,19 +230,43 @@ class RulesCog(commands.Cog):
         if not rule_obj:
             return
 
-        text = rule_obj["text"]
-        subtext = rule_obj["subtext"]
-
         embed = discord.Embed(
-        title=f"Rule {section.upper()}{number}: {rule_obj['text']}",
-        description=f"- {rule_obj['subtext']}",
-        color=0xc2e0b4
-    )
+            title=f"Rule {section.upper()}{number}: {rule_obj['text']}",
+            description=f"- {rule_obj['subtext']}",
+            color=0xc2e0b4
+        )
         embed.set_footer(text="📄 Please read the full rules document.")
         embed.url = RULES_DOC_LINK
 
         await message.channel.send(embed=embed)
 
+    @commands.command(name="search")
+    async def r_search(self, ctx, *, keyword: str):
+        """Search for a rule by keyword."""
+        if ctx.guild.id not in HTF_SERVER:
+            return
 
-async def setup(bot):
-    await bot.add_cog(RulesCog(bot))
+        results = []
+
+        for section, rules in RULES.items():
+            for num, data in rules.items():
+                combined = (data["text"] + " " + data["subtext"]).lower()
+                if keyword.lower() in combined:
+                    results.append(f"**Section {section.upper()}{num}**: {data['text']}")
+
+        if not results:
+            await ctx.send("❌ No matching rules found.")
+            return
+
+        if len(results) > 10:
+            results = results[:10]
+            results.append("*...and more matches were found.*")
+
+        embed = discord.Embed(
+            title=f"🔍 Rules matching: {keyword}",
+            description="\n".join(results),
+            color=0xc2e0b4
+        )
+        embed.set_footer(text="📄 For full context, view the rule directly or read the rules document.")
+        await ctx.send(embed=embed)
+
