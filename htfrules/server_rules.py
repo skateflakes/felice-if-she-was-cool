@@ -240,8 +240,8 @@ class RulesCog(commands.Cog):
 
         await message.channel.send(embed=embed)
 
-    @commands.command(name="search")
-    async def r_search(self, ctx, *, keyword: str):
+    @commands.command(name="find")
+    async def r_find(self, ctx, *, keyword: str):
         """Search for a rule by keyword."""
         if ctx.guild.id not in HTF_SERVER:
             return
