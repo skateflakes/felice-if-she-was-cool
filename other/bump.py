@@ -1,35 +1,31 @@
 import discord
-from redbot.core import commands, Config
+from redbot.core import commands
 from discord.ext import tasks
 import asyncio
 
 LOCKED_CHANNEL_ID = 1199460134720651364
-TARGET_ROLE_IDS = [1089214236472909914]  # Role to lock, plus @everyone
-TRIGGER_COMMAND_ID = 947088344167366698
+TARGET_ROLE_IDS = [1089214236472909914]  # Roles to lock, including @everyone
+TRIGGER_USER_ID = 302050872383242240
 LOCK_DURATION_SECONDS = 120 * 60  # 120 minutes
 
 class BumpLock(commands.Cog):
-    """Automatically locks a channel after a bump command is used."""
+    """HTF server exclusive"""
 
     def __init__(self, bot):
         self.bot = bot
         self.locked_message_ids = {}
 
     @commands.Cog.listener()
-    async def on_interaction(self, interaction: discord.Interaction):
-        if interaction.type != discord.InteractionType.application_command:
-            return
-
+    async def on_message(self, message: discord.Message):
         if (
-            interaction.channel
-            and interaction.channel.id == LOCKED_CHANNEL_ID
-            and interaction.data.get("id") == str(TRIGGER_COMMAND_ID)
+            message.author.id == TRIGGER_USER_ID
+            and message.channel.id == LOCKED_CHANNEL_ID
         ):
-            await self.handle_bump(interaction)
+            await self.handle_bump(message)
 
-    async def handle_bump(self, interaction: discord.Interaction):
-        channel = interaction.channel
-        guild = interaction.guild
+    async def handle_bump(self, message: discord.Message):
+        channel = message.channel
+        guild = message.guild
 
         overwrite_everyone = channel.overwrites_for(guild.default_role)
         overwrite_everyone.send_messages = False
@@ -45,7 +41,7 @@ class BumpLock(commands.Cog):
 
         await channel.edit(overwrites=overwrites)
 
-        msg = await channel.send(f"Server has been bumped by {interaction.user.mention}! Check back later.")
+        msg = await channel.send(f"Server has been bumped by {message.author.mention}! Check back later.")
         await msg.pin()
         self.locked_message_ids[channel.id] = msg.id
 
