@@ -1,15 +1,14 @@
 import discord
 from redbot.core import commands
-from discord.ext import tasks
 import asyncio
 
 LOCKED_CHANNEL_ID = 1199460134720651364
 TARGET_ROLE_IDS = [1089214236472909914]  # Roles to lock, including @everyone
-TRIGGER_USER_ID = 302050872383242240
+TRIGGER_USER_ID = 302050872383242240  # Disboard bot's user ID
 LOCK_DURATION_SECONDS = 120 * 60  # 120 minutes
 
 class BumpLock(commands.Cog):
-    """HTF server exclusive"""
+    """Automatically locks a channel when the Disboard bot sends a message."""
 
     def __init__(self, bot):
         self.bot = bot
@@ -41,7 +40,7 @@ class BumpLock(commands.Cog):
 
         await channel.edit(overwrites=overwrites)
 
-        msg = await channel.send(f"Server has been bumped by {message.author.mention}! Check back later.")
+        msg = await channel.send(f"Server has been bumped! Check back later.")
         await msg.pin()
         self.locked_message_ids[channel.id] = msg.id
 
