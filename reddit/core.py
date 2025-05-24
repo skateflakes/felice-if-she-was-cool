@@ -28,19 +28,26 @@ class RedditPostListener(commands.Cog):
             user_agent="HTFBot/1.0"
         )
 
-    @tasks.loop(minutes=1)
-    async def post_check(self):
-        reddit = await self._get_reddit()
-        subreddit = await reddit.subreddit("happytreefriends")
+    @tasks.loop(seconds=10)
+async def post_check(self):
+    reddit = await self._get_reddit()
+    subreddit = await reddit.subreddit("happytreefriends")
+    submissions = subreddit.stream.submissions(skip_existing=True)
 
-        async for submission in subreddit.stream.submissions(skip_existing=True):
-            channel = self.bot.get_channel(1375574181567139880)  # Bot channel
-            if channel:
-                embed = discord.Embed(
-                    title=submission.title,
-                    url=submission.url,
-                    description=submission.selftext[:2000],
-                    color=discord.Color.orange()
-                )
-                embed.set_author(name=submission.author.name)
-                await channel.send(embed=embed)
+    while True:
+        try:
+            submission = await submissions.__anext__()
+        except Exception as e:
+            print(f"[RedditPostListener] Stream error: {e}")
+            break
+
+        channel = self.bot.get_channel(1375574181567139880)
+        if channel:
+            embed = discord.Embed(
+                title=submission.title,
+                url=submission.url,
+                description=submission.selftext[:2000],
+                color=discord.Color.orange()
+            )
+            embed.set_author(name=submission.author.name)
+            await channel.send(embed=embed)
