@@ -1,53 +1,46 @@
 import discord
+from discord.ext import tasks
 from redbot.core import commands, Config
-from .redditapi import get_reddit_instance
-from .listener import RedditPostListener
+import asyncpraw
 
-ROLE_ID = 901272962341154826
-
-class RedditMod(commands.Cog):
+class RedditPostListener(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.config = Config.get_conf(self, identifier=4042024050)
-        self.config.register_global(
-            client_id=None,
-            client_secret=None,
-            username=None,
-            password=None,
-            user_agent="RedditModBot/0.1 by YourUsername"
+        self.config = Config.get_conf(self, identifier=257596407911940097)
+        default = {
+            "client_id": "",
+            "client_secret": "",
+            "username": "",
+            "password": ""
+        }
+        self.config.register_global(**default)
+        self.post_check.start()
+
+    def cog_unload(self):
+        self.post_check.cancel()
+
+    async def _get_reddit(self):
+        return asyncpraw.Reddit(
+            client_id=await self.config.client_id(),
+            client_secret=await self.config.client_secret(),
+            username=await self.config.username(),
+            password=await self.config.password(),
+            user_agent="HTFBot/1.0"
         )
-        self.reddit = None
-        self.post_logger = RedditPostListener(bot, self)
 
-    @commands.command()
-    async def redditban(self, ctx, username: str, *, reason: str = "No reason provided"):
-        """Ban a user from the subreddit. Only available for moderators of the r/happytreefriends Discord server."""
-        if not await self._has_permission(ctx):
-            return await ctx.send("🚫 You do not have permission to use this command.")
+    @tasks.loop(minutes=1)
+    async def post_check(self):
+        reddit = await self._get_reddit()
+        subreddit = await reddit.subreddit("happytreefriends")
 
-        reddit = await get_reddit_instance(self.config)
-        try:
-            sub = reddit.subreddit("happytreefriends")
-            sub.banned.add(username, ban_reason=reason)
-            await ctx.send(f"✅ Banned u/{username} from r/happytreefriends")
-        except Exception as e:
-            await ctx.send(f"❌ Failed to ban user: {e}")
-    @commands.group()
-    @commands.is_owner()
-    async def api(self, ctx):
-        """Reddit API credentials configuration."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send("Available subcommands: set")
-
-    @api.command()
-    async def set(self, ctx, client_id: str, client_secret: str, username: str, password: str):
-        """Set Reddit API credentials."""
-        await self.config.client_id.set(client_id)
-        await self.config.client_secret.set(client_secret)
-        await self.config.username.set(username)
-        await self.config.password.set(password)
-        await ctx.send("✅ Reddit API credentials set.")
-
-
-    async def _has_permission(self, ctx):
-        return await self.bot.is_owner(ctx.author) or discord.utils.get(ctx.author.roles, id=ROLE_ID)
+        async for submission in subreddit.stream.submissions(skip_existing=True):
+            channel = self.bot.get_channel(1375574181567139880)  # Bot channel
+            if channel:
+                embed = discord.Embed(
+                    title=submission.title,
+                    url=submission.url,
+                    description=submission.selftext[:2000],
+                    color=discord.Color.orange()
+                )
+                embed.set_author(name=submission.author.name)
+                await channel.send(embed=embed)
