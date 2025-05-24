@@ -4,7 +4,7 @@ import asyncio
 import praw
 from .redditapi import get_reddit_instance
 
-POST_LOG_CHANNEL_ID = 1375574181567139880  # hardcoded
+POST_LOG_CHANNEL_ID = 1210643836527403108  # hardcoded
 
 class RedditPostListener:
     def __init__(self, bot, cog):
