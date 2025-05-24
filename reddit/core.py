@@ -29,25 +29,25 @@ class RedditPostListener(commands.Cog):
         )
 
     @tasks.loop(seconds=10)
-async def post_check(self):
-    reddit = await self._get_reddit()
-    subreddit = await reddit.subreddit("happytreefriends")
-    submissions = subreddit.stream.submissions(skip_existing=True)
+    async def post_check(self):
+        reddit = await self._get_reddit()
+        subreddit = await reddit.subreddit("happytreefriends")
+        submissions = subreddit.stream.submissions(skip_existing=True)
 
-    while True:
-        try:
-            submission = await submissions.__anext__()
-        except Exception as e:
-            print(f"[RedditPostListener] Stream error: {e}")
-            break
+        while True:
+            try:
+                submission = await submissions.__anext__()
+            except Exception as e:
+                print(f"[RedditPostListener] Stream error: {e}")
+                break
 
-        channel = self.bot.get_channel(1375574181567139880)
-        if channel:
-            embed = discord.Embed(
-                title=submission.title,
-                url=submission.url,
-                description=submission.selftext[:2000],
-                color=discord.Color.orange()
-            )
-            embed.set_author(name=submission.author.name)
-            await channel.send(embed=embed)
+            channel = self.bot.get_channel(1375574181567139880)
+            if channel:
+                embed = discord.Embed(
+                    title=submission.title,
+                    url=submission.url,
+                    description=submission.selftext[:2000],
+                    color=discord.Color.orange()
+                )
+                embed.set_author(name=submission.author.name)
+                await channel.send(embed=embed)
