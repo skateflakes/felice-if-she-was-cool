@@ -1,4 +1,4 @@
-from .core import RedditMod
+from .core import RedditPostListener
 
 async def setup(bot):
-    await bot.add_cog(RedditMod(bot))
+    await bot.add_cog(RedditPostListener(bot))
