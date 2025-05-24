@@ -21,7 +21,7 @@ class RedditMod(commands.Cog):
 
     @commands.command()
     async def redditban(self, ctx, username: str, *, reason: str = "No reason provided"):
-        """Ban a user from a subreddit. Requires bot owner or specific role."""
+        """Ban a user from the subreddit. Only available for moderators of the r/happytreefriends Discord server."""
         if not await self._has_permission(ctx):
             return await ctx.send("🚫 You do not have permission to use this command.")
 
