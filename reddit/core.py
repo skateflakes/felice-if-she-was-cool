@@ -6,7 +6,7 @@ import json
 import os
 
 def load_settings():
-    path = os.path.join(os.path.dirname(__file__), "settings.json")
+    path = Path(__file__).parent.resolve() / "settings.json"
     with open(path, "r") as f:
         return json.load(f)
 
