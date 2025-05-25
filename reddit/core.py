@@ -7,7 +7,7 @@ import json
 import os
 
 def load_settings():
-    path = Path("C:\Users\lenovo\AppData\Local\Red-DiscordBot\Red-DiscordBot\data\felice\cogs\RedditModeration")
+    path = Path("C:/Users/lenovo/AppData/Local/Red-DiscordBot/Red-DiscordBot/data/felice/cogs/RedditModeration")
     with open(path, "r") as f:
         return json.load(f)
 
