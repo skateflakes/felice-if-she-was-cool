@@ -3,7 +3,7 @@ from redbot.core import commands, Config
 import asyncpraw
 import asyncio
 
-class RedditModeration(commands.Cog):
+class RedditPostListener(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config = Config.get_conf(self, identifier=1234567890)
@@ -52,4 +52,4 @@ class RedditModeration(commands.Cog):
         except asyncio.CancelledError:
             pass
         except Exception as e:
-            print(f"[RedditModeration] Stream error: {e}")
+            print(f"[RedditPostListener] Stream error: {e}")
