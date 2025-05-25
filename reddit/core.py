@@ -7,7 +7,7 @@ import json
 import os
 
 def load_settings():
-    path = Path(__file__).parent.resolve() / "settings.json"
+    path = Path("data/felice/cogs/RedditModeration/settings.json")
     with open(path, "r") as f:
         return json.load(f)
 
