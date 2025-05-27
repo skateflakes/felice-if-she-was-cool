@@ -62,7 +62,7 @@ class RedditModeration(commands.Cog):
             return await ctx.send("Reddit API not configured.")
         subreddit = await reddit.subreddit(SUBREDDIT)
         await subreddit.banned.add(user, note=reason)
-        await ctx.send(f"Banned u/{user}.
+        await ctx.send(f"Banned u/{user}.")
 Reason: {reason}")
 
     @commands.command()
