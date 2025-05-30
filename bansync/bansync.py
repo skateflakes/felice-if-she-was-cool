@@ -9,7 +9,8 @@ ALLOWED_USER_IDS = {
     382555466968072202,  # klover
     637695016143159326,  # hazel
     1109842206287745194, # vern/soapster
-    813536022717136916   # clouded/elvy
+    813536022717136916,  # clouded/elvy
+    706950605851066398   # voidz
 }
 
 # Guilds to skip
