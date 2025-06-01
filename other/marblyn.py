@@ -17,7 +17,7 @@ class Marblyn(commands.Cog):
             if user:
                 try:
                     await user.send(
-                        f'"marblyn" was mentioned in {message.channel.mention} by {message.author.mention}:\n> {message.content}'
+                        f'"marblyn"\n{message.channel.mention}\n{message.content}'
                     )
                 except discord.Forbidden:
                     pass  # Cannot DM user
