@@ -8,6 +8,12 @@ import logging
 
 log = logging.getLogger("red.felice.wikia")
 
+def is_mod_role():
+    async def predicate(ctx: Context):
+        role = ctx.guild.get_role(1358201367503700095)
+        return role in ctx.author.roles or await ctx.bot.is_owner(ctx.author)
+    return commands.check(predicate)
+
 class WikiaMod(commands.Cog):
     """Fandom Wiki moderation and logging for Happy Tree Friends."""
 
@@ -72,7 +78,7 @@ class WikiaMod(commands.Cog):
         user = change["user"]
         embed = discord.Embed(
             title="Delete Template Detected",
-            description=f"**Page:** {page}\n**User:** {user}\nMarked for deletion with `{{{{Delete}}}}`",
+            description=f"**Page:** {page}\n**User:** {user}\nMarked for deletion with `{{Delete}}`",
             color=discord.Color.red()
         )
         await self.send_to_channel(self.report_log_channel, embed)
@@ -83,7 +89,9 @@ class WikiaMod(commands.Cog):
             await channel.send(embed=embed)
 
     @commands.command()
+    @is_mod_role()
     async def wikiblock(self, ctx: Context, user: str, duration: str = "infinite", *, reason: str = "No reason specified."):
+        """Block a user on the wiki."""
         success = await self.api.block_user(user, duration, reason)
         if success:
             await ctx.send(f"✅ Blocked `{user}` for `{duration}`. Reason: {reason}")
@@ -91,7 +99,9 @@ class WikiaMod(commands.Cog):
             await ctx.send("❌ Failed to block user.")
 
     @commands.command()
+    @is_mod_role()
     async def wikiunblock(self, ctx: Context, user: str, *, reason: str):
+        """Unblock a user on the wiki."""
         success = await self.api.unblock_user(user, reason)
         if success:
             await ctx.send(f"✅ Unblocked `{user}`. Reason: {reason}")
