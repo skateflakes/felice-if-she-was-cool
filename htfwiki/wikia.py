@@ -53,9 +53,7 @@ class WikiaMod(commands.Cog):
 
         embed = discord.Embed(
             title="Wiki Edit",
-            description=f"**Page:** {page}
-**User:** {user}
-**Comment:** {comment or '—'}",
+            description=f"**Page:** {page}\n**User:** {user}\n**Comment:** {comment or '—'}",
             color=discord.Color.orange()
         )
         embed.add_field(name="Minor Edit?", value="Yes" if minor else "No", inline=True)
@@ -74,9 +72,7 @@ class WikiaMod(commands.Cog):
         user = change["user"]
         embed = discord.Embed(
             title="Delete Template Detected",
-            description=f"**Page:** {page}
-**User:** {user}
-Marked for deletion with `{{{{Delete}}}}`",
+            description=f"**Page:** {page}\n**User:** {user}\nMarked for deletion with `{{{{Delete}}}}`",
             color=discord.Color.red()
         )
         await self.send_to_channel(self.report_log_channel, embed)
