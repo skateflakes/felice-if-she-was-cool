@@ -1,34 +1,38 @@
 import aiohttp
+import asyncio
+from redbot.core.bot import Red
 import logging
 
 log = logging.getLogger("red.felice.wikia")
 
 class FandomAPI:
     def __init__(self):
-        self.base_url = "https://happytreefriends.fandom.com"
-        self.api_url = f"{self.base_url}/api.php"
+        self.session = None
+        self.bot: Red = None
+        self.base_url = "https://happytreefriends.fandom.com/api.php"
+        self.token = ""
+        self.headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+
+    async def login(self, bot: Red):
+        self.bot = bot
+        tokens = await bot.get_shared_api_tokens("wiki")
+        username = tokens.get("username")
+        password = tokens.get("pass")
+
+        if not all([username, password]):
+            log.error("Fandom API credentials (username/pass) are not set.")
+            return
+
         self.session = aiohttp.ClientSession()
-        self.logged_in = False
-        self.csrf_token = None
-        self.cookies = None
 
-    async def login(self, bot):
-        creds = await bot.get_shared_api_tokens("fandom")
-        username = creds.get("username")
-        password = creds.get("password")
+        # Get login token
+        async with self.session.get(f"{self.base_url}?action=query&meta=tokens&type=login&format=json") as resp:
+            data = await resp.json()
+            login_token = data["query"]["tokens"]["logintoken"]
 
-        if not username or not password:
-            log.error("Missing Fandom API credentials. Use `[p]set api fandom username password`.")
-            return False
-
-        async with self.session.get(self.api_url, params={
-            "action": "query",
-            "meta": "tokens",
-            "type": "login",
-            "format": "json"
-        }) as r:
-            login_token = (await r.json())["query"]["tokens"]["logintoken"]
-
+        # Log in
         payload = {
             "action": "login",
             "lgname": username,
@@ -36,105 +40,87 @@ class FandomAPI:
             "lgtoken": login_token,
             "format": "json"
         }
-        async with self.session.post(self.api_url, data=payload) as r:
-            res = await r.json()
-            if res["login"]["result"] != "Success":
-                log.error(f"Fandom login failed: {res}")
-                return False
-            self.cookies = r.cookies
 
-        async with self.session.get(self.api_url, params={
-            "action": "query",
-            "meta": "tokens",
-            "format": "json"
-        }, cookies=self.cookies) as r:
-            self.csrf_token = (await r.json())["query"]["tokens"]["csrftoken"]
+        async with self.session.post(self.base_url, data=payload, headers=self.headers) as resp:
+            login_result = await resp.json()
+            log.info(f"Login result: {login_result}")
 
-        self.logged_in = True
-        log.info("Successfully logged in to Fandom")
-        return True
+        # Get CSRF token
+        async with self.session.get(f"{self.base_url}?action=query&meta=tokens&format=json") as resp:
+            data = await resp.json()
+            self.token = data["query"]["tokens"]["csrftoken"]
 
     async def get_recent_changes(self):
-        async with self.session.get(self.api_url, params={
+        params = {
             "action": "query",
+            "format": "json",
             "list": "recentchanges",
-            "rcprop": "title|ids|sizes|flags|user|comment|timestamp",
-            "rclimit": "10",
-            "format": "json"
-        }) as r:
-            data = await r.json()
-            return data["query"]["recentchanges"]
+            "rcprop": "title|ids|sizes|flags|user|comment",
+            "rclimit": "20",
+        }
+        async with self.session.get(self.base_url, params=params) as resp:
+            data = await resp.json()
+            return data.get("query", {}).get("recentchanges", [])
 
-    async def get_revision_content(self, revid):
-        async with self.session.get(self.api_url, params={
+    async def get_revision_content(self, revid: int):
+        params = {
             "action": "query",
+            "format": "json",
             "prop": "revisions",
             "revids": revid,
-            "rvprop": "content",
-            "format": "json"
-        }) as r:
-            data = await r.json()
+            "rvprop": "content"
+        }
+        async with self.session.get(self.base_url, params=params) as resp:
+            data = await resp.json()
             pages = data.get("query", {}).get("pages", {})
             for page in pages.values():
                 revisions = page.get("revisions", [])
                 if revisions:
                     return revisions[0].get("*", "")
-        return ""
+            return ""
 
-    async def block_user(self, username: str, expiry: str, reason: str):
-        if not self.logged_in:
-            return False
+    async def block_user(self, user: str, duration: str, reason: str) -> bool:
         payload = {
             "action": "block",
-            "user": username,
-            "expiry": expiry,
+            "user": user,
+            "expiry": duration,
             "reason": reason,
-            "nocreate": 1,
-            "autoblock": 1,
-            "reblock": 1,
-            "anononly": 0,
-            "allowusertalk": 1,
-            "format": "json",
-            "token": self.csrf_token
+            "nocreate": True,
+            "autoblock": True,
+            "allowusertalk": False,
+            "reblock": True,
+            "token": self.token,
+            "format": "json"
         }
-        async with self.session.post(self.api_url, data=payload, cookies=self.cookies) as r:
-            res = await r.json()
-            if "block" in res:
-                await self.post_wall_message(username, f"You have been blocked. Reason: {reason}")
-                return True
-            log.warning(f"Failed to block user {username}: {res}")
-            return False
+        async with self.session.post(self.base_url, data=payload, headers=self.headers) as resp:
+            result = await resp.json()
+            success = "block" in result
+            if success:
+                await self.send_wall_message(user, reason)
+            return success
 
-    async def unblock_user(self, username: str, reason: str):
-        if not self.logged_in:
-            return False
+    async def unblock_user(self, user: str, reason: str) -> bool:
         payload = {
             "action": "unblock",
-            "user": username,
+            "user": user,
             "reason": reason,
-            "format": "json",
-            "token": self.csrf_token
+            "token": self.token,
+            "format": "json"
         }
-        async with self.session.post(self.api_url, data=payload, cookies=self.cookies) as r:
-            res = await r.json()
-            if "unblock" in res:
-                await self.post_wall_message(username, f"You have been unblocked. Reason: {reason}")
-                return True
-            log.warning(f"Failed to unblock user {username}: {res}")
-            return False
+        async with self.session.post(self.base_url, data=payload, headers=self.headers) as resp:
+            result = await resp.json()
+            return "unblock" in result
 
-    async def post_wall_message(self, username: str, message: str):
-        title = "Block Notice"
-        page = f"Message_Wall:{username.replace(' ', '_')}"
-        text = message
+    async def send_wall_message(self, user: str, reason: str):
+        title = f"Message_Wall:{user}"
         payload = {
             "action": "edit",
-            "title": page,
-            "text": text,
-            "summary": "Automated block notice",
-            "format": "json",
-            "token": self.csrf_token
+            "title": title,
+            "section": "new",
+            "summary": "Block notification",
+            "text": f"You have been blocked. Reason: {reason}",
+            "token": self.token,
+            "format": "json"
         }
-        async with self.session.post(self.api_url, data=payload, cookies=self.cookies) as r:
-            res = await r.json()
-            return "edit" in res
+        async with self.session.post(self.base_url, data=payload, headers=self.headers) as resp:
+            await resp.json()
