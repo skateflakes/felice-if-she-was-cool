@@ -3,7 +3,7 @@ import asyncio
 from redbot.core.bot import Red
 import logging
 
-log = logging.getLogger("red.felice.wikia")
+log = logging.getLogger("red.felice.htfwiki")
 
 class FandomAPI:
     def __init__(self):
@@ -19,10 +19,10 @@ class FandomAPI:
         self.bot = bot
         tokens = await bot.get_shared_api_tokens("wiki")
         username = tokens.get("username")
-        password = tokens.get("pass")
+        password = tokens.get("password")  # ← back to 'password'
 
         if not all([username, password]):
-            log.error("Fandom API credentials (username/pass) are not set.")
+            log.error("Fandom API credentials (username/password) are not set.")
             return
 
         self.session = aiohttp.ClientSession()
