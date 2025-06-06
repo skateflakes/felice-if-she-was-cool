@@ -183,7 +183,7 @@ class KickBanMixin(MixinMeta):
                 "User with ID {user_id} was upgraded from a temporary to a permanent ban."
             ).format(user_id=user.id)
         else:
-            user_handle = str(user) if isinstance(user, discord.abc.User) else "Unknown"
+            user_handle = str(user) if isinstance(user, discord.abc.User) else "(Username couldn't be found)"
             try:
                 await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
                 log.info(
