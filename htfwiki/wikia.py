@@ -17,7 +17,7 @@ REPORT_CHANNEL_ID = 1379672967256080397
 def contains_delete_template(content: str) -> bool:
     return "{{Delete" in content.lower()
 
-class WikiMod(commands.Cog):
+class Wikia(commands.Cog):
     def __init__(self, bot: Red):
         self.bot = bot
         self.api = FandomAPI()
