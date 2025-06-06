@@ -31,10 +31,10 @@ class RedditMod(commands.Cog):
             await ctx.send(f"❌ Failed to ban u/{user}: {e}")
 
     @commands.command()
-async def redditunban(self, ctx, user: str, *, reason: str = "No reason specified."):
-    """Unban a Reddit user from r/happytreefriends."""
-    try:
-        await self.subreddit.banned.remove(user)
-        await ctx.send(f"✅ Unbanned u/{user}. Reason: {reason}")
-    except Exception as e:
-        await ctx.send(f"❌ Failed to unban u/{user}: {e}")
+    async def redditunban(self, ctx, user: str, *, reason: str = "No reason specified."):
+        """Unban a Reddit user from r/happytreefriends."""
+        try:
+            await self.subreddit.banned.remove(user)
+            await ctx.send(f"✅ Unbanned u/{user}. Reason: {reason}")
+        except Exception as e:
+            await ctx.send(f"❌ Failed to unban u/{user}: {e}")
