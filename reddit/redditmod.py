@@ -3,6 +3,12 @@ from redbot.core import commands
 from .api import get_reddit_instance
 import re
 
+def has_redditmod_role():
+    async def predicate(ctx):
+        allowed_role_id = 901273156558413834
+        return any(role.id == allowed_role_id for role in ctx.author.roles)
+    return commands.check(predicate)
+
 class RedditMod(commands.Cog):
     """Reddit moderation for r/happytreefriends"""
 
@@ -16,6 +22,7 @@ class RedditMod(commands.Cog):
         self.subreddit = await self.reddit.subreddit("happytreefriends")
 
     @commands.command()
+    @has_redditmod_role()
     async def redditban(self, ctx, user: str, duration: str = None, *, reason: str = "No reason specified."):
         """Ban a Reddit user. Duration formats: 12h, 7d, 2w, 1m (optional)."""
         mod_note = f"User was banned by {ctx.author} through HTFBot on Discord."
@@ -26,7 +33,7 @@ class RedditMod(commands.Cog):
             if match:
                 num, unit = int(match.group(1)), match.group(2)
                 if unit == "h":
-                    duration_days = max(1, num // 24)  # Reddit requires at least 1 day
+                    duration_days = max(1, num // 24)  # Reddit minimum = 1 day
                 elif unit == "d":
                     duration_days = num
                 elif unit == "w":
@@ -34,7 +41,6 @@ class RedditMod(commands.Cog):
                 elif unit == "m":
                     duration_days = num * 30
             else:
-                # If invalid, treat it as part of the reason
                 reason = f"{duration} {reason}".strip()
                 duration_days = None
 
@@ -60,6 +66,7 @@ class RedditMod(commands.Cog):
             await ctx.send(f"❌ Failed to ban u/{user}: {e}")
 
     @commands.command()
+    @has_redditmod_role()
     async def redditunban(self, ctx, user: str, *, reason: str = "No reason specified."):
         """Unban a Reddit user from r/happytreefriends."""
         try:
