@@ -7,15 +7,19 @@ class RedditMod(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.reddit = get_reddit_instance()
-        self.subreddit = self.reddit.subreddit("happytreefriends")
+        self.reddit = None
+        self.subreddit = None
+
+    async def cog_load(self):
+        self.reddit = await get_reddit_instance(self.bot)
+        self.subreddit = await self.reddit.subreddit("happytreefriends")
 
     @commands.command()
     async def redditban(self, ctx, user: str, duration: int = None, *, reason: str = "No reason specified."):
         """Ban a Reddit user from r/happytreefriends."""
         mod_note = f"User was banned by {ctx.author} through HTFBot on Discord."
         try:
-            self.subreddit.banned.add(
+            await self.subreddit.banned.add(
                 user,
                 duration=duration,
                 note=mod_note,
@@ -31,8 +35,9 @@ class RedditMod(commands.Cog):
         """Unban a Reddit user from r/happytreefriends."""
         mod_note = f"Ban revoked by {ctx.author} through HTFBot on Discord."
         try:
-            self.subreddit.banned.remove(user)
-            self.subreddit.mod.notes.create(user, mod_note)
+            await self.subreddit.banned.remove(user)
+            mod = await self.reddit.subreddit("happytreefriends")
+            await mod.mod.notes.create(user, mod_note)
             await ctx.send(f"✅ Unbanned u/{user}. Reason: {reason}")
         except Exception as e:
             await ctx.send(f"❌ Failed to unban u/{user}: {e}")
