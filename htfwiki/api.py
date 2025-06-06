@@ -1,7 +1,7 @@
 import aiohttp
 import logging
 from redbot.core import commands
-from redbot.core.utils.api_tunnel import get_shared_api_tokens
+from redbot.core import apis
 
 log = logging.getLogger("red.felice.wikia.api")
 
@@ -14,7 +14,7 @@ class FandomAPI:
         self.token = None
 
     async def login(self):
-        tokens = await get_shared_api_tokens("htfwiki")
+        tokens = await apis.get_shared_api_tokens("htfwiki")
         self.username = tokens.get("username")
         self.password = tokens.get("password")
 
@@ -41,9 +41,7 @@ class FandomAPI:
             "lgtoken": login_token,
             "format": "json"
         }) as resp:
-            login_result = await resp.json()
-            if login_result.get("login", {}).get("result") != "Success":
-                raise RuntimeError(f"Fandom login failed: {login_result}")
+            await resp.json()
 
         # Get CSRF token
         async with self.session.get(self.base_url, params={
@@ -70,21 +68,19 @@ class FandomAPI:
         async with self.session.get(self.base_url, params=params) as resp:
             try:
                 data = await resp.json()
+                if not isinstance(data, dict):
+                    log.warning("Unexpected response format: not a dict: %s", data)
+                    return []
+                changes = data.get("query", {}).get("recentchanges")
+                if changes is None:
+                    log.warning("Missing 'recentchanges' in response: %s", data)
+                    return []
+                return changes
             except Exception as e:
-                log.exception("Failed to parse JSON from recentchanges: %s", e)
+                log.exception("Error parsing response from recentchanges: %s", e)
                 return []
-
-            if "query" not in data or "recentchanges" not in data["query"]:
-                log.warning("Unexpected recentchanges response: %s", data)
-                return []
-
-            return data["query"]["recentchanges"]
 
     async def get_revision_content(self, rev_id: int) -> str:
-        if not self.session:
-            log.error("Session not initialized for get_revision_content")
-            return ""
-
         params = {
             "action": "query",
             "prop": "revisions",
@@ -149,7 +145,6 @@ class FandomAPI:
 
     async def post_message_wall(self, user: str, reason: str):
         if not self.token:
-            log.warning("No CSRF token for message wall.")
             return
 
         params = {
