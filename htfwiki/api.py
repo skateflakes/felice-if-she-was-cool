@@ -1,7 +1,7 @@
 import aiohttp
 import logging
 from redbot.core import commands
-from redbot.core import apis
+from redbot.core.bot import get_shared_api_tokens
 
 log = logging.getLogger("red.felice.wikia.api")
 
@@ -14,7 +14,7 @@ class FandomAPI:
         self.token = None
 
     async def login(self):
-        tokens = await apis.get_shared_api_tokens("htfwiki")
+        tokens = await get_shared_api_tokens("htfwiki")
         self.username = tokens.get("username")
         self.password = tokens.get("password")
 
