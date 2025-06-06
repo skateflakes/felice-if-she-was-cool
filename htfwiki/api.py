@@ -4,7 +4,8 @@ import logging
 log = logging.getLogger("red.felice.wikia.api")
 
 class FandomAPI:
-    def __init__(self):
+    def __init__(self, bot):
+        self.bot = bot
         self.base_url = "https://happytreefriends.fandom.com/api.php"
         self.username = None
         self.password = None
@@ -12,10 +13,7 @@ class FandomAPI:
         self.token = None
 
     async def login(self):
-        from redbot.core import commands
-        from redbot.core.bot import get_shared_api_tokens
-
-        tokens = await get_shared_api_tokens("htfwiki")
+        tokens = await self.bot.get_shared_api_tokens("htfwiki")
         self.username = tokens.get("username")
         self.password = tokens.get("password")
 
@@ -63,14 +61,13 @@ class FandomAPI:
         }
         async with self.session.get(self.base_url, params=params) as resp:
             data = await resp.json()
-            return data.get("query", {}).get("recentchanges", [])
+            return data["query"]["recentchanges"]
 
     async def get_revision_content(self, rev_id: int) -> str:
         params = {
             "action": "query",
             "prop": "revisions",
             "revids": rev_id,
-            "rvslots": "main",
             "rvprop": "content",
             "format": "json"
         }
@@ -81,8 +78,7 @@ class FandomAPI:
                 for page_data in pages.values():
                     revisions = page_data.get("revisions")
                     if revisions:
-                        rev = revisions[0]
-                        return rev.get("*") or rev.get("slots", {}).get("main", {}).get("*", "")
+                        return revisions[0].get("*", "") or revisions[0].get("slots", {}).get("main", {}).get("*", "")
             except KeyError:
                 log.warning("Missing 'pages' in revision content response: %s", data)
             return ""
@@ -132,7 +128,6 @@ class FandomAPI:
 
     async def post_message_wall(self, user: str, reason: str):
         if not self.token:
-            log.warning("No CSRF token for wall message.")
             return
 
         params = {
@@ -145,6 +140,4 @@ class FandomAPI:
             "format": "json"
         }
         async with self.session.post(self.base_url, data=params) as resp:
-            result = await resp.json()
-            if "error" in result:
-                log.warning("Failed to post on message wall: %s", result["error"])
+            await resp.json()
