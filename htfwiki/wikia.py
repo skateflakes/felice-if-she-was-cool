@@ -7,7 +7,7 @@ from redbot.core.commands import Context, has_permissions
 import logging
 from .api import FandomAPI
 
-log = logging.getLogger("red.felice.wikia")
+log = logging.getLogger("red.felice.HTFWikia")
 
 ROLE_ID = 1358201367503700095
 EDIT_CHANNEL_ID = 1379623956889337906
@@ -17,7 +17,7 @@ REPORT_CHANNEL_ID = 1379672967256080397
 def contains_delete_template(content: str) -> bool:
     return "{{Delete" in content.lower()
 
-class Wikia(commands.Cog):
+class HTFWikia(commands.Cog):
     def __init__(self, bot: Red):
         self.bot = bot
         self.api = FandomAPI()
