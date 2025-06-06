@@ -1,4 +1,4 @@
-from .wikia import WikiaMod
+from .wikia import Wikia
 
 async def setup(bot):
-    await bot.add_cog(WikiaMod(bot))
+    await bot.add_cog(Wikia(bot))
