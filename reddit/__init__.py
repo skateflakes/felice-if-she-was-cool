@@ -1,4 +1,4 @@
-from .redditmoderation import RedditModeration
+from .redditmod import RedditMod
 
 async def setup(bot):
-    await bot.add_cog(RedditModeration(bot))
+    await bot.add_cog(RedditMod(bot))
