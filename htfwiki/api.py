@@ -1,115 +1,101 @@
 import aiohttp
 import logging
-from urllib.parse import urlencode
 
 log = logging.getLogger("red.felice.wikia.api")
 
 class FandomAPI:
     def __init__(self):
-        self.session: aiohttp.ClientSession | None = None
         self.base_url = "https://happytreefriends.fandom.com/api.php"
-        self.cookies = None
-        self.token = None
         self.username = None
         self.password = None
+        self.session = None
+        self.token = None
 
-    async def login(self, bot):
-        # Load credentials using Red's API key system
-        keys = await bot.get_shared_api_tokens("htfwiki")
-        self.username = keys.get("username")
-        self.password = keys.get("password")
+    async def login(self):
+        from redbot.core import commands
+        from redbot.core.bot import get_shared_api_tokens
+
+        tokens = await get_shared_api_tokens("htfwiki")
+        self.username = tokens.get("username")
+        self.password = tokens.get("password")
 
         if not self.username or not self.password:
-            log.error("Fandom username or password not set via [p]set api htfwiki username password")
-            return
+            raise RuntimeError("Fandom username and password must be set with: [p]set api htfwiki username password")
 
         self.session = aiohttp.ClientSession()
-        login_token = await self.get_login_token()
-        if not login_token:
-            log.error("Failed to get login token.")
-            return
 
-        payload = {
-            "action": "clientlogin",
-            "username": self.username,
-            "password": self.password,
-            "loginreturnurl": "https://happytreefriends.fandom.com/",
-            "logintoken": login_token,
-            "format": "json"
-        }
-
-        async with self.session.post(self.base_url, data=payload) as resp:
-            data = await resp.json()
-            if data.get("clientlogin", {}).get("status") != "PASS":
-                log.error("Login failed: %s", data)
-            else:
-                log.info("Successfully logged in as %s", self.username)
-
-        self.token = await self.get_csrf_token()
-
-    async def get_login_token(self):
+        # Get login token
         async with self.session.get(self.base_url, params={
             "action": "query",
             "meta": "tokens",
             "type": "login",
             "format": "json"
         }) as resp:
-            data = await resp.json()
-            return data["query"]["tokens"]["logintoken"]
+            result = await resp.json()
+            login_token = result["query"]["tokens"]["logintoken"]
 
-    async def get_csrf_token(self):
+        # Perform login
+        async with self.session.post(self.base_url, data={
+            "action": "login",
+            "lgname": self.username,
+            "lgpassword": self.password,
+            "lgtoken": login_token,
+            "format": "json"
+        }) as resp:
+            await resp.json()
+
+        # Get CSRF token
         async with self.session.get(self.base_url, params={
             "action": "query",
             "meta": "tokens",
             "format": "json"
         }) as resp:
-            data = await resp.json()
-            return data["query"]["tokens"]["csrftoken"]
+            result = await resp.json()
+            self.token = result["query"]["tokens"]["csrftoken"]
 
     async def get_recent_changes(self):
-        if self.session is None:
-            raise RuntimeError("Session not initialized. Call login() first.")
-
         params = {
             "action": "query",
             "list": "recentchanges",
-            "rcprop": "title|ids|sizes|flags|user|comment",
-            "rclimit": "10",
+            "rcprop": "title|ids|user|comment|flags",
+            "rclimit": 10,
             "format": "json"
         }
         async with self.session.get(self.base_url, params=params) as resp:
             data = await resp.json()
-            return data["query"]["recentchanges"]
+            return data.get("query", {}).get("recentchanges", [])
 
-    async def get_revision_content(self, revid: int):
-        if self.session is None:
-            raise RuntimeError("Session not initialized. Call login() first.")
-
+    async def get_revision_content(self, rev_id: int) -> str:
         params = {
             "action": "query",
             "prop": "revisions",
-            "revids": revid,
+            "revids": rev_id,
+            "rvslots": "main",
             "rvprop": "content",
             "format": "json"
         }
         async with self.session.get(self.base_url, params=params) as resp:
             data = await resp.json()
-            pages = data["query"]["pages"]
-            for page in pages.values():
-                revisions = page.get("revisions", [])
-                if revisions:
-                    return revisions[0]["*"] if "*" in revisions[0] else revisions[0].get("slots", {}).get("main", {}).get("*", "")
-        return ""
+            try:
+                pages = data["query"]["pages"]
+                for page_data in pages.values():
+                    revisions = page_data.get("revisions")
+                    if revisions:
+                        rev = revisions[0]
+                        return rev.get("*") or rev.get("slots", {}).get("main", {}).get("*", "")
+            except KeyError:
+                log.warning("Missing 'pages' in revision content response: %s", data)
+            return ""
 
-    async def block_user(self, user: str, duration: str, reason: str):
+    async def block_user(self, user: str, expiry: str, reason: str) -> bool:
         if not self.token:
             log.warning("No CSRF token for blocking.")
             return False
 
-        payload = {
+        params = {
             "action": "block",
             "user": user,
-            "expiry": duration,
+            "expiry": expiry,
             "reason": reason,
             "nocreate": True,
             "autoblock": True,
@@ -118,48 +104,47 @@ class FandomAPI:
             "format": "json",
             "token": self.token
         }
-        async with self.session.post(self.base_url, data=payload) as resp:
+        async with self.session.post(self.base_url, data=params) as resp:
             data = await resp.json()
             if "error" in data:
                 log.warning("Failed to block user: %s", data["error"])
                 return False
+            return True
 
-        await self.post_to_wall(user, reason)
-        return True
-
-    async def unblock_user(self, user: str, reason: str):
+    async def unblock_user(self, user: str, reason: str) -> bool:
         if not self.token:
             log.warning("No CSRF token for unblocking.")
             return False
 
-        payload = {
+        params = {
             "action": "unblock",
             "user": user,
             "reason": reason,
             "format": "json",
             "token": self.token
         }
-        async with self.session.post(self.base_url, data=payload) as resp:
+        async with self.session.post(self.base_url, data=params) as resp:
             data = await resp.json()
             if "error" in data:
                 log.warning("Failed to unblock user: %s", data["error"])
                 return False
-        return True
+            return True
 
-    async def post_to_wall(self, user: str, reason: str):
+    async def post_message_wall(self, user: str, reason: str):
         if not self.token:
+            log.warning("No CSRF token for wall message.")
             return
 
-        title = f"Message_Wall:{user}"
-        content = f"== Block notice ==\nYou have been blocked. Reason: {reason}"
-        payload = {
+        params = {
             "action": "edit",
-            "title": title,
-            "appendtext": content,
-            "format": "json",
-            "token": self.token
+            "title": f"Message_Wall:{user}",
+            "section": "new",
+            "summary": "Block notice",
+            "text": f"You have been blocked. Reason: {reason}",
+            "token": self.token,
+            "format": "json"
         }
-        async with self.session.post(self.base_url, data=payload) as resp:
-            data = await resp.json()
-            if "error" in data:
-                log.warning("Failed to post to user wall: %s", data["error"])
+        async with self.session.post(self.base_url, data=params) as resp:
+            result = await resp.json()
+            if "error" in result:
+                log.warning("Failed to post on message wall: %s", result["error"])
