@@ -1,4 +1,4 @@
-from .wikia import Wikia
+from .wikia import HTFWikia
 
 async def setup(bot):
-    await bot.add_cog(Wikia(bot))
+    await bot.add_cog(HTFWikia(bot))
