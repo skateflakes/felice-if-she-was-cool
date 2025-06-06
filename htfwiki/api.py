@@ -1,39 +1,44 @@
 import aiohttp
-import logging
+import asyncio
 from redbot.core import commands
-from redbot.core.bot import get_shared_api_tokens
+from redbot.core import Config
+from redbot.core.bot import Red
+from discord.ext import tasks
+import logging
+from datetime import datetime, timedelta
 
-log = logging.getLogger("red.felice.wikia.api")
+log = logging.getLogger("red.felice.wikia")
 
 class FandomAPI:
-    def __init__(self):
+    def __init__(self, bot: Red):
+        self.bot = bot
         self.base_url = "https://happytreefriends.fandom.com/api.php"
+        self.session = None
         self.username = None
         self.password = None
-        self.session = None
         self.token = None
 
     async def login(self):
-        tokens = await get_shared_api_tokens("htfwiki")
+        tokens = await self.bot.get_shared_api_tokens("htfwiki")
         self.username = tokens.get("username")
         self.password = tokens.get("password")
 
         if not self.username or not self.password:
-            raise RuntimeError("Fandom username and password must be set with: [p]set api htfwiki username password")
+            raise RuntimeError("Missing username or password. Set them with `[p]set api htfwiki username password`.")
 
         self.session = aiohttp.ClientSession()
 
-        # Get login token
+        # Step 1: Get login token
         async with self.session.get(self.base_url, params={
             "action": "query",
             "meta": "tokens",
             "type": "login",
             "format": "json"
         }) as resp:
-            result = await resp.json()
-            login_token = result["query"]["tokens"]["logintoken"]
+            data = await resp.json()
+            login_token = data["query"]["tokens"]["logintoken"]
 
-        # Perform login
+        # Step 2: Post login request
         async with self.session.post(self.base_url, data={
             "action": "login",
             "lgname": self.username,
@@ -41,120 +46,78 @@ class FandomAPI:
             "lgtoken": login_token,
             "format": "json"
         }) as resp:
-            await resp.json()
+            result = await resp.json()
+            if result["login"]["result"] != "Success":
+                raise RuntimeError("Fandom login failed: {}".format(result["login"]["result"]))
 
-        # Get CSRF token
+        # Step 3: Get CSRF token
         async with self.session.get(self.base_url, params={
             "action": "query",
             "meta": "tokens",
             "format": "json"
         }) as resp:
-            result = await resp.json()
-            self.token = result["query"]["tokens"]["csrftoken"]
+            data = await resp.json()
+            self.token = data["query"]["tokens"]["csrftoken"]
 
     async def get_recent_changes(self):
-        if not self.session:
-            log.error("HTTP session not initialized. Did you forget to login?")
-            return []
-
+        now = datetime.utcnow()
+        start = (now - timedelta(minutes=2)).isoformat() + "Z"
         params = {
             "action": "query",
+            "format": "json",
             "list": "recentchanges",
-            "rcprop": "title|ids|user|comment|flags",
+            "rcprop": "title|ids|user|comment|flags|timestamp",
+            "rcstart": start,
             "rclimit": 10,
-            "format": "json"
+            "rcdir": "newer"
         }
-
         async with self.session.get(self.base_url, params=params) as resp:
-            try:
-                data = await resp.json()
-                if not isinstance(data, dict):
-                    log.warning("Unexpected response format: not a dict: %s", data)
-                    return []
-                changes = data.get("query", {}).get("recentchanges")
-                if changes is None:
-                    log.warning("Missing 'recentchanges' in response: %s", data)
-                    return []
-                return changes
-            except Exception as e:
-                log.exception("Error parsing response from recentchanges: %s", e)
+            data = await resp.json()
+            if data is None or "query" not in data:
                 return []
+            return data["query"]["recentchanges"]
 
-    async def get_revision_content(self, rev_id: int) -> str:
-        params = {
-            "action": "query",
-            "prop": "revisions",
-            "revids": rev_id,
-            "rvprop": "content",
-            "format": "json"
-        }
-        async with self.session.get(self.base_url, params=params) as resp:
-            data = await resp.json()
-            try:
-                pages = data["query"]["pages"]
-                for page_data in pages.values():
-                    revisions = page_data.get("revisions")
-                    if revisions:
-                        return revisions[0].get("*", "") or revisions[0].get("slots", {}).get("main", {}).get("*", "")
-            except KeyError:
-                log.warning("Missing 'pages' in revision content response: %s", data)
-            return ""
+class HTFWikia(commands.Cog):
+    def __init__(self, bot: Red):
+        self.bot = bot
+        self.api = FandomAPI(bot)
+        self.edit_channel_id = 1379623956889337906
+        self.report_channel_id = 1379672967256080397
+        self.session = aiohttp.ClientSession()
+        self.edit_monitor.start()
 
-    async def block_user(self, user: str, expiry: str, reason: str) -> bool:
-        if not self.token:
-            log.warning("No CSRF token for blocking.")
-            return False
+    def cog_unload(self):
+        self.edit_monitor.cancel()
+        asyncio.create_task(self.session.close())
 
-        params = {
-            "action": "block",
-            "user": user,
-            "expiry": expiry,
-            "reason": reason,
-            "nocreate": True,
-            "autoblock": True,
-            "allowusertalk": False,
-            "reblock": True,
-            "format": "json",
-            "token": self.token
-        }
-        async with self.session.post(self.base_url, data=params) as resp:
-            data = await resp.json()
-            if "error" in data:
-                log.warning("Failed to block user: %s", data["error"])
-                return False
-            return True
+    @tasks.loop(seconds=60)
+    async def edit_monitor(self):
+        try:
+            if self.api.session is None:
+                await self.api.login()
 
-    async def unblock_user(self, user: str, reason: str) -> bool:
-        if not self.token:
-            log.warning("No CSRF token for unblocking.")
-            return False
+            changes = await self.api.get_recent_changes()
+            if not changes:
+                return
 
-        params = {
-            "action": "unblock",
-            "user": user,
-            "reason": reason,
-            "format": "json",
-            "token": self.token
-        }
-        async with self.session.post(self.base_url, data=params) as resp:
-            data = await resp.json()
-            if "error" in data:
-                log.warning("Failed to unblock user: %s", data["error"])
-                return False
-            return True
+            edit_channel = self.bot.get_channel(self.edit_channel_id)
+            report_channel = self.bot.get_channel(self.report_channel_id)
+            if not edit_channel:
+                return
 
-    async def post_message_wall(self, user: str, reason: str):
-        if not self.token:
-            return
+            for change in changes:
+                msg = f"**Edit:** [[{change['title']}]] by `{change['user']}`\nComment: {change.get('comment', 'No comment')}\n<https://happytreefriends.fandom.com/wiki/{change['title'].replace(' ', '_')}>"
+                await edit_channel.send(msg)
 
-        params = {
-            "action": "edit",
-            "title": f"Message_Wall:{user}",
-            "section": "new",
-            "summary": "Block notice",
-            "text": f"You have been blocked. Reason: {reason}",
-            "token": self.token,
-            "format": "json"
-        }
-        async with self.session.post(self.base_url, data=params) as resp:
-            await resp.json()
+                if "{{Delete" in change.get("comment", "") and report_channel:
+                    await report_channel.send(f"⚠️ **Delete template used:** [[{change['title']}]] by `{change['user']}`\n<https://happytreefriends.fandom.com/wiki/{change['title'].replace(' ', '_')}>")
+
+        except Exception as e:
+            log.exception("Failed to poll recent changes: %s", e)
+
+    @edit_monitor.before_loop
+    async def before_edit_monitor(self):
+        await self.bot.wait_until_ready()
+
+async def setup(bot: Red):
+    await bot.add_cog(HTFWikia(bot))
