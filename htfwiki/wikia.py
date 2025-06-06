@@ -20,7 +20,7 @@ def contains_delete_template(content: str) -> bool:
 class HTFWikia(commands.Cog):
     def __init__(self, bot: Red):
         self.bot = bot
-        self.api = FandomAPI()
+        self.api = FandomAPI(bot)
         self.ready = False
         self.edit_monitor_task = self.edit_monitor.start()
 
