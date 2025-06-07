@@ -5,12 +5,7 @@ from typing import Union
 
 # Whitelisted users
 ALLOWED_USER_IDS = {
-    459697638124552192,  # cosmo
-    382555466968072202,  # klover
-    637695016143159326,  # hazel
-    1109842206287745194, # vern/soapster
-    813536022717136916,  # clouded/elvy
-    706950605851066398   # voidz
+    751613076960444487,  # ME and NOBODY ELSE!
 }
 
 # Guilds to skip
@@ -30,16 +25,16 @@ class BanSync(commands.Cog):
 
         # permission check
         if not await self.bot.is_owner(ctx.author) and ctx.author.id not in ALLOWED_USER_IDS:
-            await ctx.send("❌ You don't have permission to use this command.")
+            await ctx.send("kys")
             return
 
         # Prevent banning self
         if isinstance(user, discord.User):
             if user.id == ctx.author.id:
-                await ctx.send("🚫 You can't ban yourself.")
+                await ctx.send("kys")
                 return
             if user.bot:
-                await ctx.send("🚫 You can't ban bots.")
+                await ctx.send("kys")
                 return
 
         # If raw ID, fetch user object if possible
@@ -47,10 +42,10 @@ class BanSync(commands.Cog):
             fetched_user = await self.bot.fetch_user(user)
             if fetched_user:
                 if fetched_user.bot:
-                    await ctx.send("🚫 You can't ban bots.")
+                    await ctx.send("kys")
                     return
                 if fetched_user.id == ctx.author.id:
-                    await ctx.send("🚫 You can't ban yourself.")
+                    await ctx.send("kys")
                     return
                 user = fetched_user
             else:
@@ -85,7 +80,7 @@ class BanSync(commands.Cog):
         """Unban a user from all servers they were banned with BanSync."""
 
         if not await self.bot.is_owner(ctx.author) and ctx.author.id not in ALLOWED_USER_IDS:
-            await ctx.send("❌ You don't have permission to use this command.")
+            await ctx.send("kys")
             return
 
         user_id = user.id if isinstance(user, discord.User) else int(user)
