@@ -13,14 +13,14 @@ SKIPPED_GUILD_IDS = {1282000118962323538}
 
 
 class BanSync(commands.Cog):
-    """Ban or unban a user across all servers the bot is in."""
+    """kills everybody"""
 
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
     @commands.bot_has_permissions(ban_members=True)
-    async def bansync(self, ctx: commands.Context, user: Union[discord.User, RawUserIdConverter], *, reason: str = "No reason provided."):
+    async def killEverybody(self, ctx: commands.Context, user: Union[discord.User, RawUserIdConverter], *, reason: str = "No reason provided."):
         """Ban a user from all servers the bot is in."""
 
         # permission check
