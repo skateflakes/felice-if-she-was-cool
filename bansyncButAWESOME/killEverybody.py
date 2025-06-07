@@ -116,4 +116,4 @@ class KillEverybody(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(BanSync(bot))
+    await bot.add_cog(KillEverybody(bot))
