@@ -12,7 +12,7 @@ ALLOWED_USER_IDS = {
 SKIPPED_GUILD_IDS = {1282000118962323538}
 
 
-class BanSync(commands.Cog):
+class KillEverybody(commands.Cog):
     """kills everybody"""
 
     def __init__(self, bot):
